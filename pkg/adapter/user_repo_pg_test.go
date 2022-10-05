@@ -1,6 +1,7 @@
 package adapter_test
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -41,7 +42,7 @@ func TestCreateUser(t *testing.T) {
 
 	tx, _ := txBeginner.Begin()
 	defer tx.Rollback()
-	_, err = userRepo.CreateUser(tx, dto.User{
+	_, err = userRepo.CreateUser(context.Background(), tx, dto.User{
 		ID:        uuid.New().String(),
 		FirstName: "wonk",
 		LastName:  "sun",

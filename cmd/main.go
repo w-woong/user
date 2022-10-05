@@ -13,9 +13,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/w-woong/user/pkg/adapter"
-	"github.com/w-woong/user/pkg/core/usecase"
 	"github.com/w-woong/user/pkg/delivery"
 	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/pkg/usecase"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -30,6 +30,7 @@ func init() {
 }
 
 func main() {
+	defaultTimeout := 6 * time.Second
 	dsn := "host=testpghost user=test password=test123 dbname=woong_user port=5432 sslmode=disable TimeZone=Asia/Seoul"
 	var sqlDB *sql.DB
 	var err error
@@ -50,12 +51,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	db.AutoMigrate(&dto.User{})
+	db.AutoMigrate(&dto.User{}, &dto.UserEmail{})
 
 	// userRepo := adapter.NewNopUser()
 	txBeginner := adapter.NewGormTxBeginner(db)
 	userRepo := adapter.NewPgUser(db)
-	userUsc := usecase.NewUser(txBeginner, userRepo)
+	userUsc := usecase.NewUser(txBeginner, userRepo, defaultTimeout)
 	userDelivery := delivery.NewUserHttpHandler(userUsc)
 
 	router := mux.NewRouter()

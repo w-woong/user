@@ -1,6 +1,8 @@
 package adapter
 
 import (
+	"errors"
+
 	"github.com/w-woong/user/pkg/common"
 	"gorm.io/gorm"
 )
@@ -39,4 +41,12 @@ func (a *GormTxController) Commit() error {
 
 func (a *GormTxController) Rollback() error {
 	return a.Tx.Rollback().Error
+}
+
+func ConvertErr(err error) error {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return common.ErrRecordNotFound
+	}
+
+	return err
 }

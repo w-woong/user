@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-wonk/si"
 	"github.com/gorilla/mux"
-	"github.com/w-woong/user/pkg/core/port"
 	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/pkg/port"
 )
 
 type UserHttpHandler struct {
@@ -46,7 +46,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := d.userUsc.RegisterUser(user); err != nil {
+	if err := d.userUsc.RegisterUser(r.Context(), user); err != nil {
 		http.Error(w, "could not register user", http.StatusBadRequest)
 		return
 	}

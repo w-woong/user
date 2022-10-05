@@ -1,13 +1,13 @@
-package model_test
+package entity_test
 
 import (
 	"testing"
 
-	"github.com/w-woong/user/pkg/core/model"
+	"github.com/w-woong/user/pkg/dto"
 )
 
-func getEmptyUser() model.User {
-	return model.NilUser
+func getEmptyUser() dto.User {
+	return dto.NilUser
 }
 
 func TestUserIsNil(t *testing.T) {
