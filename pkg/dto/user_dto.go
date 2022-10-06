@@ -30,7 +30,7 @@ func (d User) IsNil() bool {
 
 type UserEmail struct {
 	ID        string     `gorm:"privaryKey;type:varchar(64)" json:"id,omitempty"`
-	UserID    string     `gorm:"type:varchar(64)" json:"user_id"`
+	UserID    string     `gorm:"type:varchar(64)" json:"user_id,omitempty"`
 	Email     string     `gorm:"unique;not null;type:varchar(256);index:idx_useremails_1" json:"email"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at,omitempty"`
 	UpdatedAt *time.Time `gorm:"<-:update" json:"updated_at,omitempty"`

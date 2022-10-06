@@ -48,15 +48,18 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) error {
 		return err
 	}
 
-	user := &entity.User{}
-	common.Scan(&userDto, &user)
+	user := entity.User{}
+	common.ScanStruct(&userDto, &user)
 
 	err = user.PrepareToRegister()
 	if err != nil {
 		return err
 	}
 
-	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, userDto)
+	userToCreate := dto.User{}
+	common.ScanStruct(&user, &userToCreate)
+
+	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, userToCreate)
 	if err != nil {
 		return err
 	}

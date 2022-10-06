@@ -197,6 +197,30 @@ func TestScan(t *testing.T) {
 
 	dst := Dst{}
 
-	common.Scan(&src, &dst)
+	common.ScanStruct(&src, &dst)
 	assert.EqualValues(t, src, dst)
+}
+
+type MyStr string
+type StructA struct {
+	Str string
+}
+
+type StructB struct {
+	Str MyStr
+}
+
+func TestScanStructWithTypeAlias(t *testing.T) {
+	a := StructA{
+		Str: "hello",
+	}
+	b := StructB{}
+
+	common.ScanStruct(&a, &b)
+	assert.EqualValues(t, a.Str, b.Str)
+
+	c := StructB{"hello"}
+	d := StructA{}
+	common.ScanStruct(&c, &d)
+	assert.EqualValues(t, c.Str, d.Str)
 }

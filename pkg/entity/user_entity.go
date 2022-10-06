@@ -32,6 +32,8 @@ func (e *User) PrepareToRegister() error {
 
 	e.ID = e.generateID()
 
+	e.setUserIDToUserEmail()
+
 	return nil
 }
 
@@ -66,4 +68,11 @@ func (e User) validateBirthDate() error {
 	}
 
 	return nil
+}
+
+func (e *User) setUserIDToUserEmail() {
+	for i := range e.UserEmails {
+		e.UserEmails[i].GenerateAndSetID()
+		e.UserEmails[i].UserID = e.ID
+	}
 }
