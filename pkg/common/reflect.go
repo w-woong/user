@@ -16,19 +16,11 @@ func scan(kind reflect.Kind, src, dst reflect.Value) {
 	switch kind {
 	case reflect.Struct:
 		scanStruct(src, dst)
-		return
 	case reflect.Slice:
-		if src.Type().Elem().Kind() == reflect.Struct {
-			scanStructSlice(src, dst)
-			return
-		} else if src.Type().Elem().Kind() == reflect.Pointer {
-			if reflect.Indirect(reflect.ValueOf(src.Type().Elem())).Kind() == reflect.Struct {
-				scanStructSlice(src, dst)
-				return
-			}
-		}
+		scanSlice(src, dst)
+	default:
+		scanOthers(src, dst)
 	}
-	scanOthers(src, dst)
 }
 
 func scanOthers(src reflect.Value, dst reflect.Value) {
@@ -40,7 +32,20 @@ func scanOthers(src reflect.Value, dst reflect.Value) {
 	}
 }
 
-func scanStructSlice(src reflect.Value, dst reflect.Value) {
+func scanSlice(src reflect.Value, dst reflect.Value) {
+	elementType := src.Type().Elem()
+	kind := elementType.Kind()
+	switch {
+	case kind == reflect.Struct:
+		scanSliceStruct(src, dst)
+	case kind == reflect.Pointer && reflect.Indirect(reflect.ValueOf(elementType)).Kind() == reflect.Struct:
+		scanSliceStruct(src, dst)
+	default:
+		scanOthers(src, dst)
+	}
+}
+
+func scanSliceStruct(src reflect.Value, dst reflect.Value) {
 	dstFieldSlice := reflect.MakeSlice(reflect.SliceOf(dst.Type().Elem()), src.Len(), src.Cap())
 	for j := 0; j < src.Len(); j++ {
 		srcValue := reflect.Indirect(src.Index(j))
