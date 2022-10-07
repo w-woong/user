@@ -1,49 +1,71 @@
 package common
 
 import (
-	"fmt"
 	"reflect"
 )
 
-func ScanStruct(src interface{}, dst interface{}) {
+// ScanStruct scans src struct's fields and sets them to dest's fields that have the same field names.
+func ScanStruct(src, dest interface{}) {
 	srcValue := reflect.ValueOf(src).Elem()
-	srcValueType := srcValue.Type()
-	dstValue := reflect.ValueOf(dst).Elem()
-	dstValueType := dstValue.Type()
+	destValue := reflect.ValueOf(dest).Elem()
 
-	n := srcValue.NumField()
+	scanStruct(srcValue, destValue)
+}
+
+func scan(kind reflect.Kind, src, dst reflect.Value) {
+	switch kind {
+	case reflect.Struct:
+		scanStruct(src, dst)
+	case reflect.Slice:
+		scanSlice(src, dst)
+	default:
+		scanOthers(src, dst)
+	}
+}
+
+func scanOthers(src reflect.Value, dst reflect.Value) {
+	dstFieldType := dst.Type()
+	if src.Type().AssignableTo(dstFieldType) {
+		dst.Set(src)
+	} else if src.CanConvert(dstFieldType) {
+		dst.Set(src.Convert(dstFieldType))
+	}
+}
+
+func scanSlice(src reflect.Value, dst reflect.Value) {
+	dstFieldSlice := reflect.MakeSlice(reflect.SliceOf(dst.Type().Elem()), src.Len(), src.Cap())
+	for j := 0; j < src.Len(); j++ {
+		srcValue := reflect.Indirect(src.Index(j))
+		dstValue := dstFieldSlice.Index(j)
+		if dstValue.Kind() == reflect.Pointer {
+			dstValue.Set(reflect.New(dstValue.Type().Elem()))
+		}
+		dstValue = reflect.Indirect(dstValue)
+		scanStruct(srcValue, dstValue)
+	}
+	dst.Set(dstFieldSlice)
+}
+
+func scanStruct(src reflect.Value, dst reflect.Value) {
+	n := src.NumField()
 	for i := 0; i < n; i++ {
-		f := srcValueType.Field(i)
+		f := src.Type().Field(i)
 		if f.PkgPath != "" && f.Name != "_" {
 			continue
 		}
 
-		k := f.Type.Kind()
-		fmt.Println(k, f)
-		if k == reflect.Interface {
-			continue
-		}
-		// if k == reflect.Slice {
-		// 	elemType := reflect.ValueOf(f.Type.Elem())
-		// 	fmt.Println(elemType.Kind(), elemType)
-		// }
-
-		var dstField reflect.StructField
-		var ok bool
-		if dstField, ok = dstValueType.FieldByName(f.Name); !ok {
+		srcFieldKind := f.Type.Kind()
+		if srcFieldKind == reflect.Interface {
 			continue
 		}
 
-		dstFieldType := dstField.Type
-		if dstFieldType.Kind() != k {
+		if _, ok := dst.Type().FieldByName(f.Name); !ok {
 			continue
 		}
 
-		srcField := srcValue.Field(i)
-		if srcField.Type().AssignableTo(dstFieldType) {
-			dstValue.FieldByName(f.Name).Set(srcField)
-		} else if srcField.CanConvert(dstFieldType) {
-			dstValue.FieldByName(f.Name).Set(srcField.Convert(dstFieldType))
-		}
+		srcValue := src.Field(i)
+		dstValue := dst.FieldByName(f.Name)
+
+		scan(srcFieldKind, srcValue, dstValue)
 	}
 }
