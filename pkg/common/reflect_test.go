@@ -1,9 +1,10 @@
 package common_test
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"testing"
+	"time"
 
 	"github.com/tj/assert"
 	"github.com/w-woong/user/pkg/common"
@@ -230,13 +231,22 @@ func TestScanStructWithTypeAlias(t *testing.T) {
 type CountryCode string
 
 type UserDto struct {
-	EmailsPtr   []*EmailDto
-	ID          string
-	Name        *string
-	Nationality string
-	Email       EmailDto
-	EmailPtr    *EmailDto
-	Emails      []EmailDto
+	UpdatedAt    time.Time
+	UpdatedAtPtr *time.Time
+	CreatedAt    sql.NullTime
+	CreatedAtPtr *sql.NullTime
+	EmailsPtr    []*EmailDto
+	ID           string
+	Name         *string
+	Nationality  string
+	Email        EmailDto
+	EmailPtr     *EmailDto
+	Emails       []EmailDto
+}
+
+func (e *UserDto) String() string {
+	b, _ := json.Marshal(e)
+	return string(b)
 }
 
 type EmailDto struct {
@@ -244,13 +254,17 @@ type EmailDto struct {
 }
 
 type User struct {
-	ID          string
-	Name        *string
-	Nationality CountryCode
-	Email       Email
-	EmailPtr    *Email
-	Emails      []Email
-	EmailsPtr   []*Email
+	ID           string
+	Name         *string
+	Nationality  CountryCode
+	Email        Email
+	EmailPtr     *Email
+	Emails       []Email
+	EmailsPtr    []*Email
+	CreatedAt    sql.NullTime
+	CreatedAtPtr *sql.NullTime
+	UpdatedAt    time.Time
+	UpdatedAtPtr *time.Time
 }
 
 func (e *User) String() string {
@@ -270,7 +284,7 @@ func TestScanStruct(t *testing.T) {
 	emails = append(emails, EmailDto{Addr: "wonk@wonk.orgg"})
 	emailsPtr := make([]*EmailDto, 0)
 	emailsPtr = append(emailsPtr, &EmailDto{Addr: "wonk@wonk.orgg"})
-
+	now, _ := time.Parse("20060102", "20221001")
 	userDto := UserDto{
 		ID:          ID,
 		Name:        &name,
@@ -283,13 +297,24 @@ func TestScanStruct(t *testing.T) {
 		},
 		Emails:    emails,
 		EmailsPtr: emailsPtr,
+		CreatedAt: sql.NullTime{
+			Time:  now,
+			Valid: true,
+		},
+		CreatedAtPtr: &sql.NullTime{
+			Time:  now,
+			Valid: true},
+		UpdatedAt:    now,
+		UpdatedAtPtr: &now,
 	}
 
 	user := User{}
 	common.ScanStruct(&userDto, &user)
-	fmt.Println("reflected user:", user.String())
-	assert.EqualValues(t, `{"ID":"wonksing","Name":"wonk","Nationality":"KOR","Email":{"Addr":"wonk@wonk.orgg"},"EmailPtr":{"Addr":"ptrwonk@wonk.orgg"},"Emails":[{"Addr":"wonk@wonk.orgg"}],"EmailsPtr":[{"Addr":"wonk@wonk.orgg"}]}`,
-		user.String())
+	// fmt.Println("original user:", userDto.String())
+	// fmt.Println("reflected user:", user.String())
+
+	expected := `{"ID":"wonksing","Name":"wonk","Nationality":"KOR","Email":{"Addr":"wonk@wonk.orgg"},"EmailPtr":{"Addr":"ptrwonk@wonk.orgg"},"Emails":[{"Addr":"wonk@wonk.orgg"}],"EmailsPtr":[{"Addr":"wonk@wonk.orgg"}],"CreatedAt":{"Time":"2022-10-01T00:00:00Z","Valid":true},"CreatedAtPtr":{"Time":"2022-10-01T00:00:00Z","Valid":true},"UpdatedAt":"2022-10-01T00:00:00Z","UpdatedAtPtr":"2022-10-01T00:00:00Z"}`
+	assert.EqualValues(t, expected, user.String())
 }
 
 func BenchmarkScanStruct(b *testing.B) {

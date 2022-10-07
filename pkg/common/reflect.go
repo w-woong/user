@@ -1,8 +1,14 @@
 package common
 
 import (
+	"database/sql/driver"
 	"reflect"
+	"time"
 )
+
+type Valuer interface {
+	Value() (driver.Value, error)
+}
 
 // ScanStruct scans src struct's fields and sets them to dest's fields that have the same field names.
 func ScanStruct(src, dest interface{}) {
@@ -12,14 +18,14 @@ func ScanStruct(src, dest interface{}) {
 	scanStruct(srcValue, destValue)
 }
 
-func scan(kind reflect.Kind, src, dst reflect.Value) {
+func scan(kind reflect.Kind, src, dest reflect.Value) {
 	switch kind {
 	case reflect.Struct:
-		scanStruct(src, dst)
+		scanStruct(src, dest)
 	case reflect.Slice:
-		scanSlice(src, dst)
+		scanSlice(src, dest)
 	default:
-		scanOthers(src, dst)
+		scanOthers(src, dest)
 	}
 }
 
@@ -59,7 +65,16 @@ func scanSliceStruct(src reflect.Value, dst reflect.Value) {
 	dst.Set(dstFieldSlice)
 }
 
-func scanStruct(src reflect.Value, dst reflect.Value) {
+func scanStruct(src reflect.Value, dest reflect.Value) {
+	switch src.Interface().(type) {
+	case Valuer:
+		scanOthers(src, dest)
+		return
+	case time.Time:
+		scanOthers(src, dest)
+		return
+	}
+
 	n := src.NumField()
 	for i := 0; i < n; i++ {
 		f := src.Type().Field(i)
@@ -72,12 +87,12 @@ func scanStruct(src reflect.Value, dst reflect.Value) {
 			continue
 		}
 
-		if _, ok := dst.Type().FieldByName(f.Name); !ok {
+		if _, ok := dest.Type().FieldByName(f.Name); !ok {
 			continue
 		}
 
 		srcValue := src.Field(i)
-		dstValue := dst.FieldByName(f.Name)
+		dstValue := dest.FieldByName(f.Name)
 
 		scan(srcFieldKind, srcValue, dstValue)
 	}
