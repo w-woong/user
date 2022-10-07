@@ -25,27 +25,18 @@ func NewUser(txBeginner common.TxBeginner, userRepo port.UserRepo, defaultTimeou
 	}
 }
 
-func (u *User) FindUserByID(ID string) (dto.User, error) {
-	user, err := u.userRepo.ReadUserByID(ID)
-	if err != nil {
-		return dto.NilUser, err
-	}
-
-	return user, nil
-}
-
-func (u *User) RegisterUser(ctx context.Context, userDto dto.User) error {
+func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, u.defaultTimeout)
 	defer cancel()
 
 	tx, err := u.txBeginner.Begin()
 	if err != nil {
-		return err
+		return dto.NilUser, err
 	}
 	defer tx.Rollback()
 
 	if err := u.takenLoginID(ctx, tx, userDto.LoginID); err != nil {
-		return err
+		return dto.NilUser, err
 	}
 
 	user := entity.User{}
@@ -53,7 +44,7 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) error {
 
 	err = user.PrepareToRegister()
 	if err != nil {
-		return err
+		return dto.NilUser, err
 	}
 
 	userToCreate := dto.User{}
@@ -61,13 +52,26 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) error {
 
 	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, userToCreate)
 	if err != nil {
-		return err
+		return dto.NilUser, err
 	}
 	if rowsAffected != 1 {
-		return common.ErrCreateUser
+		return dto.NilUser, common.ErrCreateUser
 	}
 
-	return tx.Commit()
+	if err = tx.Commit(); err != nil {
+		return dto.NilUser, err
+	}
+
+	return userToCreate, nil
+}
+
+func (u *User) FindUserByID(ID string) (dto.User, error) {
+	user, err := u.userRepo.ReadUserByID(ID)
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	return user, nil
 }
 
 func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {

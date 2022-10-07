@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// User entity.
 type User struct {
 	ID          string
 	LoginID     string
@@ -20,9 +21,13 @@ type User struct {
 	UpdatedAt   *time.Time
 	DeletedAt   *time.Time
 
-	UserEmails []UserEmail
+	UserEmails UserEmails
 }
 
+// PrepareToRegister prepares user entity, e, before registering a new user.
+// It validates underlying fields.
+// It generates and set a new ID.
+// It sets references to child entities.
 func (e *User) PrepareToRegister() error {
 
 	err := e.validate()
@@ -30,11 +35,17 @@ func (e *User) PrepareToRegister() error {
 		return err
 	}
 
-	e.ID = e.generateID()
+	e.GenerateAndSetID()
 
-	e.setUserIDToUserEmail()
+	if err = e.UserEmails.PrepareToRegister(e.ID); err != nil {
+		return err
+	}
 
 	return nil
+}
+
+func (e *User) GenerateAndSetID() {
+	e.ID = e.generateID()
 }
 
 func (e User) generateID() string {
@@ -70,9 +81,9 @@ func (e User) validateBirthDate() error {
 	return nil
 }
 
-func (e *User) setUserIDToUserEmail() {
+func (e *User) prepareUserEmailsToRegister() {
 	for i := range e.UserEmails {
 		e.UserEmails[i].GenerateAndSetID()
-		e.UserEmails[i].UserID = e.ID
+		e.UserEmails[i].RefersUserIDTo(e.ID)
 	}
 }

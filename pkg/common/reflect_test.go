@@ -345,3 +345,48 @@ func BenchmarkScanStruct(b *testing.B) {
 	}
 
 }
+
+type House struct {
+	People People
+}
+
+func (d *House) String() string {
+	b, _ := json.Marshal(d)
+	return string(b)
+}
+
+type HouseEntity struct {
+	People PeopleEntity
+}
+
+func (e *HouseEntity) String() string {
+	b, _ := json.Marshal(e)
+	return string(b)
+}
+
+type Person struct {
+	Name string
+}
+type People []Person
+
+type PersonEntity struct {
+	Name string
+}
+type PeopleEntity []PersonEntity
+
+func TestSliceTypeAlias(t *testing.T) {
+	people := make(People, 0)
+	people = append(people, Person{Name: "wonk"})
+	house := House{People: people}
+
+	var houseEntity HouseEntity
+	common.ScanStruct(&house, &houseEntity)
+	assert.Equal(t, house.String(), houseEntity.String())
+
+	peopleEntity := make(PeopleEntity, 0)
+	peopleEntity = append(peopleEntity, PersonEntity{Name: "mink"})
+	houseEntity = HouseEntity{People: peopleEntity}
+	house = House{}
+	common.ScanStruct(&houseEntity, &house)
+	assert.Equal(t, houseEntity.String(), house.String())
+}
