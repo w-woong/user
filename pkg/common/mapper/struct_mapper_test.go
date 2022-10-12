@@ -9,6 +9,28 @@ import (
 	"github.com/w-woong/user/pkg/common/mapper"
 )
 
+func init() {
+	mapper.StoreMapper(&Person{}, &PersonEntity{})
+}
+
+func TestStructMapperCached(t *testing.T) {
+	mobiles := make([]*Mobile, 0)
+	mobiles = append(mobiles, &Mobile{Number: "210232323232", Provider: &Provider{Name: "ds"}})
+	mobiles = append(mobiles, &Mobile{Number: "210232323232", Provider: &Provider{Name: "ds"}})
+
+	person := Person{
+		Name:      "wonk",
+		MobilePtr: &Mobile{Number: "010"},
+		Mobile:    Mobile{Number: "20202"},
+		Mobiles:   mobiles,
+	}
+	personEntity := PersonEntity{}
+	mapper.Map(&person, &personEntity)
+
+	// fmt.Println(personEntity.String())
+	assert.Equal(t, person.String(), personEntity.String())
+}
+
 func TestStructMapper(t *testing.T) {
 
 	src := reflect.TypeOf(Person{})

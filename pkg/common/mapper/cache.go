@@ -14,8 +14,8 @@ var (
 
 func StoreMapper(src, dest any) {
 	key := PairKey(src, dest)
-	srcType := reflect.TypeOf(src)
-	destType := reflect.TypeOf(dest)
+	srcType := reflect.TypeOf(src).Elem()
+	destType := reflect.TypeOf(dest).Elem()
 	sm := NewStructMapper(srcType, destType)
 
 	_mapper.Store(key, sm)
