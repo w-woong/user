@@ -4,6 +4,15 @@ import (
 	"reflect"
 )
 
+func Map(src, dest any) error {
+	sm, err := LoadMapper(src, dest)
+	if err != nil {
+		return err
+	}
+	sm.Map(src, dest)
+	return nil
+}
+
 func NewStructMapper(src, dest reflect.Type) *StructMapper {
 	return NewStructMapperWithIndices([]int{}, []int{}, src, dest)
 }

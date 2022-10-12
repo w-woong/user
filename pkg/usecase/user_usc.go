@@ -46,7 +46,9 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	}
 
 	user := entity.User{}
-	common.ScanStruct(&userDto, &user)
+	if err := mapper.Map(&userDto, &user); err != nil {
+		return dto.NilUser, err
+	}
 
 	err = user.PrepareToRegister()
 	if err != nil {
@@ -54,7 +56,9 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	}
 
 	userToCreate := dto.User{}
-	common.ScanStruct(&user, &userToCreate)
+	if err := mapper.Map(&user, &userToCreate); err != nil {
+		return dto.NilUser, err
+	}
 
 	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, userToCreate)
 	if err != nil {
