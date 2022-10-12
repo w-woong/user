@@ -83,7 +83,7 @@ func scanStruct(src reflect.Value, dest reflect.Value) {
 		}
 
 		srcFieldKind := f.Type.Kind()
-		if srcFieldKind == reflect.Interface {
+		if srcFieldKind == reflect.Interface && f.Type.NumField() > 0 {
 			continue
 		}
 
