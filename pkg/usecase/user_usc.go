@@ -6,10 +6,16 @@ import (
 	"time"
 
 	"github.com/w-woong/user/pkg/common"
+	"github.com/w-woong/user/pkg/common/mapper"
 	"github.com/w-woong/user/pkg/dto"
 	"github.com/w-woong/user/pkg/entity"
 	"github.com/w-woong/user/pkg/port"
 )
+
+func init() {
+	mapper.StoreMapper(&dto.User{}, &entity.User{})
+	mapper.StoreMapper(&entity.User{}, &dto.User{})
+}
 
 type User struct {
 	txBeginner     common.TxBeginner
