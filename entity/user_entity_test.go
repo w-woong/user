@@ -3,11 +3,11 @@ package entity_test
 import (
 	"testing"
 
-	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/entity"
 )
 
-func getEmptyUser() dto.User {
-	return dto.NilUser
+func getEmptyUser() entity.User {
+	return entity.NilUser
 }
 
 func TestUserIsNil(t *testing.T) {

@@ -8,20 +8,26 @@ import (
 	"github.com/google/uuid"
 )
 
+var NilUser = User{}
+
 // User entity.
 type User struct {
-	ID          string
-	LoginID     string
-	FirstName   string
-	LastName    string
-	BirthDate   string
-	Gender      string
-	Nationality string
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	DeletedAt   *time.Time
+	ID          string     `gorm:"primaryKey;type:varchar(64);comment:id"`
+	LoginID     string     `gorm:"unique;not null;type:varchar(256);index:idx_users_1;comment:login id"`
+	FirstName   string     `gorm:"not null;type:varchar(256);comment:first name"`
+	LastName    string     `gorm:"not null;type:varchar(256);comment:last name"`
+	BirthDate   string     `gorm:"type:varchar(8);comment:yyyymmdd"`
+	Gender      string     `gorm:"type:varchar(1);comment:M or F"`
+	Nationality string     `gorm:"type:varchar(3);comment:Nationality(ISO 3166-1)"`
+	CreatedAt   *time.Time `gorm:"<-:create"`
+	UpdatedAt   *time.Time `gorm:"<-:update"`
+	DeletedAt   *time.Time `gorm:"<-:update"`
 
-	UserEmails UserEmails
+	UserEmails UserEmails `gorm:"foreignKey:UserID;references:ID"`
+}
+
+func (e User) IsNil() bool {
+	return e.ID == ""
 }
 
 // PrepareToRegister prepares user entity, e, before registering a new user.
@@ -79,11 +85,4 @@ func (e User) validateBirthDate() error {
 	}
 
 	return nil
-}
-
-func (e *User) prepareUserEmailsToRegister() {
-	for i := range e.UserEmails {
-		e.UserEmails[i].GenerateAndSetID()
-		e.UserEmails[i].RefersUserIDTo(e.ID)
-	}
 }

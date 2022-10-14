@@ -5,18 +5,18 @@ import (
 )
 
 type User struct {
-	ID          string     `gorm:"primaryKey;type:varchar(64);comment:id" json:"id,omitempty"`
-	LoginID     string     `gorm:"unique;not null;type:varchar(256);index:idx_users_1;comment:login id" json:"login_id,omitempty"`
-	FirstName   string     `gorm:"not null;type:varchar(256);comment:first name" json:"first_name,omitempty"`
-	LastName    string     `gorm:"not null;type:varchar(256);comment:last name" json:"last_name,omitempty"`
-	BirthDate   string     `gorm:"type:varchar(8);comment:yyyymmdd" json:"birth_date,omitempty"`
-	Gender      string     `gorm:"type:varchar(1);comment:M or F" json:"gender,omitempty"`
-	Nationality string     `gorm:"type:varchar(3);comment:Nationality(ISO 3166-1)" json:"nationality,omitempty"`
-	CreatedAt   *time.Time `gorm:"<-:create" json:"created_at,omitempty"`
-	UpdatedAt   *time.Time `gorm:"<-:update" json:"updated_at,omitempty"`
-	DeletedAt   *time.Time `gorm:"<-:update" json:"deleted_at,omitempty"`
+	ID          string     `json:"id,omitempty"`
+	LoginID     string     `json:"login_id,omitempty"`
+	FirstName   string     `json:"first_name,omitempty"`
+	LastName    string     `json:"last_name,omitempty"`
+	BirthDate   string     `json:"birth_date,omitempty"`
+	Gender      string     `json:"gender,omitempty"`
+	Nationality string     `json:"nationality,omitempty"`
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
+	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
 
-	UserEmails  []UserEmail `gorm:"foreignKey:UserID;references:ID"`
+	UserEmails  []UserEmail `json:"user_emails,omitempty"`
 	UserSecrets []UserSecret
 }
 
@@ -24,17 +24,13 @@ type Users []User
 
 var NilUser = User{}
 
-func (d User) IsNil() bool {
-	return d.LoginID == ""
-}
-
 type UserEmail struct {
-	ID        string     `gorm:"privaryKey;type:varchar(64)" json:"id,omitempty"`
-	UserID    string     `gorm:"type:varchar(64)" json:"user_id,omitempty"`
-	Email     string     `gorm:"unique;not null;type:varchar(256);index:idx_useremails_1" json:"email"`
-	CreatedAt *time.Time `gorm:"<-:create" json:"created_at,omitempty"`
-	UpdatedAt *time.Time `gorm:"<-:update" json:"updated_at,omitempty"`
-	DeletedAt *time.Time `gorm:"<-:update" json:"deleted_at,omitempty"`
+	ID        string     `json:"id,omitempty"`
+	UserID    string     `json:"user_id,omitempty"`
+	Email     string     `json:"email"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }
 
 var NilUserEmail = UserEmail{}

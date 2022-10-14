@@ -50,17 +50,11 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 		return dto.NilUser, err
 	}
 
-	err = user.PrepareToRegister()
-	if err != nil {
+	if err = user.PrepareToRegister(); err != nil {
 		return dto.NilUser, err
 	}
 
-	userToCreate := dto.User{}
-	if err := structmapper.Map(&user, &userToCreate); err != nil {
-		return dto.NilUser, err
-	}
-
-	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, userToCreate)
+	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, user)
 	if err != nil {
 		return dto.NilUser, err
 	}
@@ -72,7 +66,12 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 		return dto.NilUser, err
 	}
 
-	return userToCreate, nil
+	res := dto.User{}
+	if err = structmapper.Map(&user, &res); err != nil {
+		return dto.NilUser, err
+	}
+
+	return res, nil
 }
 
 func (u *User) FindUserByID(ID string) (dto.User, error) {
@@ -81,7 +80,12 @@ func (u *User) FindUserByID(ID string) (dto.User, error) {
 		return dto.NilUser, err
 	}
 
-	return user, nil
+	res := dto.User{}
+	if err = structmapper.Map(&user, &res); err != nil {
+		return dto.NilUser, err
+	}
+
+	return res, nil
 }
 
 func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID string) error {
@@ -99,7 +103,11 @@ func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID s
 }
 
 func (u *User) ModifyUser(ID string, user dto.User) error {
-	_, err := u.userRepo.UpdateUserByID(ID, user)
+	conv := entity.User{}
+	if err := structmapper.Map(&user, &conv); err != nil {
+		return err
+	}
+	_, err := u.userRepo.UpdateUserByID(ID, conv)
 	return err
 }
 
