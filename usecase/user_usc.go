@@ -5,25 +5,25 @@ import (
 	"errors"
 	"time"
 
-	"github.com/w-woong/user/common"
-	"github.com/w-woong/user/common/mapper"
+	"github.com/w-woong/common"
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
+	"github.com/wonksing/structmapper"
 )
 
 func init() {
-	mapper.StoreMapper(&dto.User{}, &entity.User{})
-	mapper.StoreMapper(&entity.User{}, &dto.User{})
+	structmapper.StoreMapper(&dto.User{}, &entity.User{})
+	structmapper.StoreMapper(&entity.User{}, &dto.User{})
 }
 
 type User struct {
-	txBeginner     common.TxBeginner
+	txBeginner     port.TxBeginner
 	userRepo       port.UserRepo
 	defaultTimeout time.Duration
 }
 
-func NewUser(txBeginner common.TxBeginner, userRepo port.UserRepo, defaultTimeout time.Duration) *User {
+func NewUser(txBeginner port.TxBeginner, userRepo port.UserRepo, defaultTimeout time.Duration) *User {
 	return &User{
 		txBeginner:     txBeginner,
 		userRepo:       userRepo,
@@ -46,7 +46,7 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	}
 
 	user := entity.User{}
-	if err := mapper.Map(&userDto, &user); err != nil {
+	if err := structmapper.Map(&userDto, &user); err != nil {
 		return dto.NilUser, err
 	}
 
@@ -56,7 +56,7 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	}
 
 	userToCreate := dto.User{}
-	if err := mapper.Map(&user, &userToCreate); err != nil {
+	if err := structmapper.Map(&user, &userToCreate); err != nil {
 		return dto.NilUser, err
 	}
 
@@ -84,7 +84,7 @@ func (u *User) FindUserByID(ID string) (dto.User, error) {
 	return user, nil
 }
 
-func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {
+func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID string) error {
 	foundUser, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
 	if err != nil {
 		if !errors.Is(err, common.ErrRecordNotFound) {

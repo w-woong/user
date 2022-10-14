@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/tj/assert"
+	"github.com/w-woong/common"
 	"github.com/w-woong/user/dto"
 )
 
@@ -24,7 +25,7 @@ func TestCreateUser(t *testing.T) {
 		Nationality: "KOR",
 		UserEmails:  userEmails,
 	}
-	reqBody := dto.HttpBody{
+	reqBody := common.HttpBody{
 		Document: &user,
 	}
 	b, err := json.Marshal(&reqBody)

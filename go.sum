@@ -121,6 +121,10 @@ github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PK
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/tj/assert v0.0.3 h1:Df/BlaZ20mq6kuai7f5z2TvPFiwC3xaWJSDQNiIS3Rk=
 github.com/tj/assert v0.0.3/go.mod h1:Ne6X72Q+TB1AteidzQncjw9PabbMp4PBMZ1k+vd1Pvk=
+github.com/w-woong/common v0.0.2 h1:692RwWdrmJkpsc48QBlZ3pz3vcR5t+0clwija7sJsvM=
+github.com/w-woong/common v0.0.2/go.mod h1:5jWPKNgqJwc8bRlk9437UL8oCeJwW55atTQJQlVQ8xg=
+github.com/wonksing/structmapper v0.0.2 h1:Vw97uwLVnFP2bbiEs3dB3jmiUfF/WyH4XTDVZrbiduI=
+github.com/wonksing/structmapper v0.0.2/go.mod h1:adymR5XTDyTNUuUWHZNE5ODPwNCMQl2MAm+IggQCCKE=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=

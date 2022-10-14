@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-wonk/si"
 	"github.com/gorilla/mux"
-	"github.com/w-woong/user/common"
+	"github.com/w-woong/common"
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/port"
 )
@@ -23,7 +23,7 @@ func NewUserHttpHandler(findUserUsc port.UserUsc) *UserHttpHandler {
 
 func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Request) {
 	var user dto.User
-	reqBody := dto.HttpBody{
+	reqBody := common.HttpBody{
 		Document: &user,
 	}
 
@@ -41,7 +41,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	resBody := dto.HttpBody{
+	resBody := common.HttpBody{
 		Status:   http.StatusOK,
 		Document: &registeredUser,
 	}
@@ -63,7 +63,7 @@ func (d *UserHttpHandler) HandleFindByID(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	resBody := dto.HttpBody{
+	resBody := common.HttpBody{
 		Status:   http.StatusOK,
 		Document: &user,
 	}
@@ -79,7 +79,7 @@ func (d *UserHttpHandler) HandleModifyUser(w http.ResponseWriter, r *http.Reques
 	ID := vars["id"]
 
 	var user dto.User
-	reqBody := dto.HttpBody{
+	reqBody := common.HttpBody{
 		Document: &user,
 	}
 
@@ -96,7 +96,7 @@ func (d *UserHttpHandler) HandleModifyUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if err = si.EncodeJson(w, &dto.HttpBodyOK); err != nil {
+	if err = si.EncodeJson(w, &common.HttpBodyOK); err != nil {
 		log.Println(err)
 		return
 	}
@@ -113,7 +113,7 @@ func (d *UserHttpHandler) HandleRemoveUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if err = si.EncodeJson(w, &dto.HttpBodyOK); err != nil {
+	if err = si.EncodeJson(w, &common.HttpBodyOK); err != nil {
 		log.Println(err)
 		return
 	}

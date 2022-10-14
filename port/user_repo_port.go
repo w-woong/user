@@ -3,7 +3,6 @@ package port
 import (
 	"context"
 
-	"github.com/w-woong/user/common"
 	"github.com/w-woong/user/dto"
 )
 
@@ -12,10 +11,10 @@ type UserRepo interface {
 	ReadUserByID(ID string) (dto.User, error)
 
 	// ReadUserByLoginID reads user by loginID.
-	ReadUserByLoginID(ctx context.Context, tx common.TxController, loginID string) (dto.User, error)
+	ReadUserByLoginID(ctx context.Context, tx TxController, loginID string) (dto.User, error)
 
 	// CreateUser creates a new user.
-	CreateUser(ctx context.Context, tx common.TxController, user dto.User) (int64, error)
+	CreateUser(ctx context.Context, tx TxController, user dto.User) (int64, error)
 
 	// UpdateUserByID updates user having ID with user.
 	UpdateUserByID(ID string, user dto.User) (int64, error)

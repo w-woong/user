@@ -3,8 +3,8 @@ package adapter
 import (
 	"context"
 
-	"github.com/w-woong/user/common"
 	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/port"
 	"gorm.io/gorm"
 )
 
@@ -28,7 +28,7 @@ func (a *PgUser) ReadUserByID(ID string) (dto.User, error) {
 	return user, nil
 }
 
-func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx common.TxController, loginID string) (dto.User, error) {
+func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx port.TxController, loginID string) (dto.User, error) {
 	user := dto.User{}
 	res := tx.(*GormTxController).Tx.WithContext(ctx).
 		Where("login_id = ?", loginID).
@@ -41,7 +41,7 @@ func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx common.TxController, 
 	return user, nil
 }
 
-func (a *PgUser) CreateUser(ctx context.Context, tx common.TxController, user dto.User) (int64, error) {
+func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user dto.User) (int64, error) {
 
 	res := tx.(*GormTxController).Tx.WithContext(ctx).Create(&user)
 	if res.Error != nil {

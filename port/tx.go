@@ -1,4 +1,4 @@
-package common
+package port
 
 type TxBeginner interface {
 	Begin() (TxController, error)
