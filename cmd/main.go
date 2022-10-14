@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/w-woong/user/pkg/adapter"
-	"github.com/w-woong/user/pkg/delivery"
-	"github.com/w-woong/user/pkg/dto"
-	"github.com/w-woong/user/pkg/usecase"
+	"github.com/w-woong/user/adapter"
+	"github.com/w-woong/user/delivery"
+	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/usecase"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

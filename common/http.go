@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-wonk/si"
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/dto"
 )
 
 func HttpError(w http.ResponseWriter, status int) {

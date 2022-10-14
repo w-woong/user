@@ -3,8 +3,8 @@ package port
 import (
 	"context"
 
-	"github.com/w-woong/user/pkg/common"
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/common"
+	"github.com/w-woong/user/dto"
 )
 
 type UserRepo interface {

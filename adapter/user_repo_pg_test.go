@@ -10,8 +10,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/tj/assert"
-	"github.com/w-woong/user/pkg/adapter"
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/adapter"
+	"github.com/w-woong/user/dto"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

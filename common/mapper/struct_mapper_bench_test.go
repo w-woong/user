@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/w-woong/user/pkg/common/mapper"
+	"github.com/w-woong/user/common/mapper"
 )
 
 func BenchmarkMapper(b *testing.B) {

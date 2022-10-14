@@ -3,7 +3,7 @@ package entity_test
 import (
 	"testing"
 
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/dto"
 )
 
 func getEmptyUser() dto.User {

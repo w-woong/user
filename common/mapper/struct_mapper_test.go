@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/tj/assert"
-	"github.com/w-woong/user/pkg/common/mapper"
+	"github.com/w-woong/user/common/mapper"
 )
 
 func init() {

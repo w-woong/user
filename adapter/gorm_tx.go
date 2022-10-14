@@ -3,7 +3,7 @@ package adapter
 import (
 	"errors"
 
-	"github.com/w-woong/user/pkg/common"
+	"github.com/w-woong/user/common"
 	"gorm.io/gorm"
 )
 

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/tj/assert"
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/dto"
 )
 
 func TestHttpBodyRegisterUser(t *testing.T) {

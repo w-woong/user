@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-wonk/si"
 	"github.com/gorilla/mux"
-	"github.com/w-woong/user/pkg/common"
-	"github.com/w-woong/user/pkg/dto"
-	"github.com/w-woong/user/pkg/port"
+	"github.com/w-woong/user/common"
+	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/port"
 )
 
 type UserHttpHandler struct {

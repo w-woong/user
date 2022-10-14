@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"github.com/w-woong/user/pkg/dto"
+	"github.com/w-woong/user/dto"
 )
 
 // NopUser is a no-op user adapter that impelments port.UserRepo interface.

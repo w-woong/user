@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/tj/assert"
-	"github.com/w-woong/user/pkg/common"
+	"github.com/w-woong/user/common"
 )
 
 type Src struct {
