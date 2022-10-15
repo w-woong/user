@@ -88,6 +88,8 @@ func (u *User) FindUserByID(ID string) (dto.User, error) {
 	return res, nil
 }
 
+// takenLoginID checks if loginID is already taken.
+// Returns nil if loginID is available.
 func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID string) error {
 	foundUser, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
 	if err != nil {

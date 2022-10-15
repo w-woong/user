@@ -26,6 +26,7 @@ type User struct {
 	UserEmails UserEmails `gorm:"foreignKey:UserID;references:ID"`
 }
 
+// IsNill returns true if underlying ID is empty.
 func (e User) IsNil() bool {
 	return e.ID == ""
 }

@@ -62,7 +62,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/v1/user/register", userDelivery.HandleRegisterUser).Methods("POST")
 	router.HandleFunc("/v1/user/{id}", userDelivery.HandleFindByID).Methods("GET")
-	router.HandleFunc("/v1/user/{id}", userDelivery.HandleModifyUser).Methods("PUT")
+	router.HandleFunc("/v1/user/{id}", userDelivery.HandleChangeUser).Methods("PUT")
 	router.HandleFunc("/v1/user/{id}", userDelivery.HandleRemoveUser).Methods("DELETE")
 
 	server := http.Server{

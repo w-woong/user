@@ -21,7 +21,7 @@ func TestCreateUser(t *testing.T) {
 		LoginID:     "wonksing",
 		FirstName:   "wonk",
 		LastName:    "sun",
-		BirthDate:   time.Now().Round(0),
+		BirthDate:   time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
 		Gender:      "M",
 		Nationality: "KOR",
 		UserEmails:  userEmails,
