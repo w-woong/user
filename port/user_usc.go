@@ -1,5 +1,7 @@
 package port
 
+//go:generate mockgen -destination=./mocks/mock_user_usc.go -package=mocks -mock_names=UserUsc=MockUserUsc -source=./user_usc.go . UserUsc
+
 import (
 	"context"
 
