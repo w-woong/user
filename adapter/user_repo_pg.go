@@ -58,7 +58,9 @@ func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user enti
 
 func (a *PgUser) UpdateUserByID(ID string, user entity.User) (int64, error) {
 	// res := a.db.Save(&user)
-	res := a.db.Model(&dto.User{ID: ID}).Updates(&user)
+	res := a.db.Model(&entity.User{}).
+		Where("id = ?", user.ID).
+		Updates(&user)
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return 0, ConvertErr(res.Error)

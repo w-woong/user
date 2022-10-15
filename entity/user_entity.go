@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"errors"
 	"regexp"
 	"time"
@@ -16,6 +17,9 @@ type User struct {
 	LoginID     string     `gorm:"unique;not null;type:string;size:256;index:idx_users_1;comment:login id"`
 	FirstName   string     `gorm:"not null;type:string;size:256;comment:first name"`
 	LastName    string     `gorm:"not null;type:string;size:256;comment:last name"`
+	BirthYear   int        `gorm:"column:birth_year"`
+	BirthMonth  int        `gorm:"column:birth_month"`
+	BirthDay    int        `gorm:"column:birth_day"`
 	BirthDate   time.Time  `gorm:"comment:yyyymmdd"`
 	Gender      string     `gorm:"type:string;size:1;comment:M or F"`
 	Nationality string     `gorm:"type:string;size:3;comment:Nationality(ISO 3166-1)"`
@@ -24,6 +28,11 @@ type User struct {
 	DeletedAt   *time.Time `gorm:"<-:update"`
 
 	UserEmails UserEmails `gorm:"foreignKey:UserID;references:ID"`
+}
+
+func (e *User) String() string {
+	b, _ := json.Marshal(e)
+	return string(b)
 }
 
 // IsNill returns true if underlying ID is empty.

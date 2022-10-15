@@ -7,15 +7,9 @@ import (
 
 	"github.com/w-woong/common"
 	"github.com/w-woong/user/dto"
-	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
-	"github.com/wonksing/structmapper"
+	"github.com/w-woong/user/usecase/conv"
 )
-
-func init() {
-	structmapper.StoreMapper(&dto.User{}, &entity.User{})
-	structmapper.StoreMapper(&entity.User{}, &dto.User{})
-}
 
 type User struct {
 	txBeginner     port.TxBeginner
@@ -45,8 +39,8 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 		return dto.NilUser, err
 	}
 
-	user := entity.User{}
-	if err := structmapper.Map(&userDto, &user); err != nil {
+	user, err := conv.ToUserEntity(&userDto)
+	if err != nil {
 		return dto.NilUser, err
 	}
 
@@ -66,12 +60,7 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 		return dto.NilUser, err
 	}
 
-	res := dto.User{}
-	if err = structmapper.Map(&user, &res); err != nil {
-		return dto.NilUser, err
-	}
-
-	return res, nil
+	return conv.ToUserDto(&user)
 }
 
 func (u *User) FindUserByID(ID string) (dto.User, error) {
@@ -80,12 +69,7 @@ func (u *User) FindUserByID(ID string) (dto.User, error) {
 		return dto.NilUser, err
 	}
 
-	res := dto.User{}
-	if err = structmapper.Map(&user, &res); err != nil {
-		return dto.NilUser, err
-	}
-
-	return res, nil
+	return conv.ToUserDto(&user)
 }
 
 // takenLoginID checks if loginID is already taken.
@@ -105,11 +89,11 @@ func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID s
 }
 
 func (u *User) ModifyUser(ID string, user dto.User) error {
-	conv := entity.User{}
-	if err := structmapper.Map(&user, &conv); err != nil {
+	userEntity, err := conv.ToUserEntity(&user)
+	if err != nil {
 		return err
 	}
-	_, err := u.userRepo.UpdateUserByID(ID, conv)
+	_, err = u.userRepo.UpdateUserByID(ID, userEntity)
 	return err
 }
 
