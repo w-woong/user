@@ -9,7 +9,7 @@ type User struct {
 	LoginID     string     `json:"login_id,omitempty"`
 	FirstName   string     `json:"first_name,omitempty"`
 	LastName    string     `json:"last_name,omitempty"`
-	BirthDate   string     `json:"birth_date,omitempty"`
+	BirthDate   time.Time  `json:"birth_date,omitempty"`
 	Gender      string     `json:"gender,omitempty"`
 	Nationality string     `json:"nationality,omitempty"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`

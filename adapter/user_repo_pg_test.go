@@ -3,6 +3,7 @@ package adapter_test
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -17,7 +18,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	dsn := "host=testpghost user=test password=test123 dbname=testdb port=5432 sslmode=disable TimeZone=Asia/Seoul"
+	dsn := "host=testpghost user=test password=test123 dbname=woong_user port=5432 sslmode=disable TimeZone=Asia/Seoul"
 	var sqlDB *sql.DB
 	var err error
 	if sqlDB, err = sql.Open("pgx", dsn); err != nil {
@@ -40,15 +41,18 @@ func TestCreateUser(t *testing.T) {
 	txBeginner := adapter.NewGormTxBeginner(db)
 	userRepo := adapter.NewPgUser(db)
 
-	tx, _ := txBeginner.Begin()
+	tx, err := txBeginner.Begin()
+	assert.Nil(t, err)
 	defer tx.Rollback()
 	_, err = userRepo.CreateUser(context.Background(), tx, entity.User{
 		ID:        uuid.New().String(),
+		LoginID:   "wonk",
 		FirstName: "wonk",
 		LastName:  "sun",
+		BirthDate: time.Now(),
 	})
 	assert.Nil(t, err)
-	tx.Commit()
+	assert.Nil(t, tx.Commit())
 }
 
 func TestUpdateUser(t *testing.T) {
@@ -79,4 +83,9 @@ func TestUpdateUser(t *testing.T) {
 		LoginID: "wonksing",
 	})
 	assert.Nil(t, err)
+}
+
+func TestBirthDate(t *testing.T) {
+	fmt.Println(time.Now().Round(0))
+	fmt.Println(time.Date(2000, 1, 1, 0, 0, 0, 0, time.Local))
 }

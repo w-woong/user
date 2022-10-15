@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
-	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/usecase"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -51,7 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	db.AutoMigrate(&dto.User{}, &dto.UserEmail{})
+	db.AutoMigrate(&entity.User{}, &entity.UserEmail{})
 
 	// userRepo := adapter.NewNopUser()
 	txBeginner := adapter.NewGormTxBeginner(db)

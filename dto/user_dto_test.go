@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/tj/assert"
 	"github.com/w-woong/common"
@@ -20,7 +21,7 @@ func TestCreateUser(t *testing.T) {
 		LoginID:     "wonksing",
 		FirstName:   "wonk",
 		LastName:    "sun",
-		BirthDate:   "20000101",
+		BirthDate:   time.Now().Round(0),
 		Gender:      "M",
 		Nationality: "KOR",
 		UserEmails:  userEmails,

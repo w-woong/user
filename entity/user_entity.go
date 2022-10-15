@@ -12,13 +12,13 @@ var NilUser = User{}
 
 // User entity.
 type User struct {
-	ID          string     `gorm:"primaryKey;type:varchar(64);comment:id"`
-	LoginID     string     `gorm:"unique;not null;type:varchar(256);index:idx_users_1;comment:login id"`
-	FirstName   string     `gorm:"not null;type:varchar(256);comment:first name"`
-	LastName    string     `gorm:"not null;type:varchar(256);comment:last name"`
-	BirthDate   string     `gorm:"type:varchar(8);comment:yyyymmdd"`
-	Gender      string     `gorm:"type:varchar(1);comment:M or F"`
-	Nationality string     `gorm:"type:varchar(3);comment:Nationality(ISO 3166-1)"`
+	ID          string     `gorm:"primaryKey;type:string;size:64;comment:id"`
+	LoginID     string     `gorm:"unique;not null;type:string;size:256;index:idx_users_1;comment:login id"`
+	FirstName   string     `gorm:"not null;type:string;size:256;comment:first name"`
+	LastName    string     `gorm:"not null;type:string;size:256;comment:last name"`
+	BirthDate   time.Time  `gorm:"comment:yyyymmdd"`
+	Gender      string     `gorm:"type:string;size:1;comment:M or F"`
+	Nationality string     `gorm:"type:string;size:3;comment:Nationality(ISO 3166-1)"`
 	CreatedAt   *time.Time `gorm:"<-:create"`
 	UpdatedAt   *time.Time `gorm:"<-:update"`
 	DeletedAt   *time.Time `gorm:"<-:update"`
@@ -80,9 +80,9 @@ func (e User) validateBirthDate() error {
 	// if ok, _ := regexp.MatchString(`\d{4}\d{2}\d{2}`, m.BirthDate); !ok {
 	// 	return errors.New("birth_date is not valid")
 	// }
-	if _, err := time.Parse("20060102", e.BirthDate); err != nil {
-		return err
-	}
+	// if _, err := time.Parse("20060102", e.BirthDate); err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
