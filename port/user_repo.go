@@ -19,8 +19,15 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, tx TxController, user entity.User) (int64, error)
 
 	// UpdateUserByID updates user having ID with user.
-	UpdateUserByID(ID string, user entity.User) (int64, error)
+	// UpdateUserByID(ID string, user entity.User) (int64, error)
 
 	// DeleteUserByID deletes user with ID.
 	DeleteUserByID(ID string) (int64, error)
+}
+
+type PasswordRepo interface {
+	UpdateByUserID(ctx context.Context, tx TxController, value string, userID string) (int64, error)
+
+	ReadByUserID(ctx context.Context, tx TxController, userID string) (entity.Password, error)
+	ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error)
 }

@@ -96,17 +96,70 @@ func (mr *MockUserRepoMockRecorder) ReadUserByLoginID(ctx, tx, loginID interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadUserByLoginID", reflect.TypeOf((*MockUserRepo)(nil).ReadUserByLoginID), ctx, tx, loginID)
 }
 
-// UpdateUserByID mocks base method.
-func (m *MockUserRepo) UpdateUserByID(ID string, user entity.User) (int64, error) {
+// MockPasswordRepo is a mock of PasswordRepo interface.
+type MockPasswordRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockPasswordRepoMockRecorder
+}
+
+// MockPasswordRepoMockRecorder is the mock recorder for MockPasswordRepo.
+type MockPasswordRepoMockRecorder struct {
+	mock *MockPasswordRepo
+}
+
+// NewMockPasswordRepo creates a new mock instance.
+func NewMockPasswordRepo(ctrl *gomock.Controller) *MockPasswordRepo {
+	mock := &MockPasswordRepo{ctrl: ctrl}
+	mock.recorder = &MockPasswordRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPasswordRepo) EXPECT() *MockPasswordRepoMockRecorder {
+	return m.recorder
+}
+
+// ReadByUserID mocks base method.
+func (m *MockPasswordRepo) ReadByUserID(ctx context.Context, tx port.TxController, userID string) (entity.Password, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUserByID", ID, user)
+	ret := m.ctrl.Call(m, "ReadByUserID", ctx, tx, userID)
+	ret0, _ := ret[0].(entity.Password)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadByUserID indicates an expected call of ReadByUserID.
+func (mr *MockPasswordRepoMockRecorder) ReadByUserID(ctx, tx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadByUserID", reflect.TypeOf((*MockPasswordRepo)(nil).ReadByUserID), ctx, tx, userID)
+}
+
+// ReadByUserIDNoTx mocks base method.
+func (m *MockPasswordRepo) ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadByUserIDNoTx", ctx, userID)
+	ret0, _ := ret[0].(entity.Password)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadByUserIDNoTx indicates an expected call of ReadByUserIDNoTx.
+func (mr *MockPasswordRepoMockRecorder) ReadByUserIDNoTx(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadByUserIDNoTx", reflect.TypeOf((*MockPasswordRepo)(nil).ReadByUserIDNoTx), ctx, userID)
+}
+
+// UpdateByUserID mocks base method.
+func (m *MockPasswordRepo) UpdateByUserID(ctx context.Context, tx port.TxController, value, userID string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateByUserID", ctx, tx, value, userID)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateUserByID indicates an expected call of UpdateUserByID.
-func (mr *MockUserRepoMockRecorder) UpdateUserByID(ID, user interface{}) *gomock.Call {
+// UpdateByUserID indicates an expected call of UpdateByUserID.
+func (mr *MockPasswordRepoMockRecorder) UpdateByUserID(ctx, tx, value, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserByID", reflect.TypeOf((*MockUserRepo)(nil).UpdateUserByID), ID, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateByUserID", reflect.TypeOf((*MockPasswordRepo)(nil).UpdateByUserID), ctx, tx, value, userID)
 }

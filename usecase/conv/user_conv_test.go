@@ -12,10 +12,10 @@ import (
 )
 
 func TestToUserEntity(t *testing.T) {
-	password := dto.UserPassword{
+	password := dto.Pasword{
 		Value: "asdfasdfasdfasdfasdfasdfasdf",
 	}
-	personal := dto.UserPersonal{
+	personal := dto.Personal{
 		FirstName:   "wonk",
 		LastName:    "sun",
 		BirthYear:   2022,
@@ -24,12 +24,12 @@ func TestToUserEntity(t *testing.T) {
 		Gender:      "M",
 		Nationality: "KOR",
 	}
-	emails := make([]dto.UserEmail, 0)
-	emails = append(emails, dto.UserEmail{
+	emails := make([]dto.Email, 0)
+	emails = append(emails, dto.Email{
 		Email:    "wonk@wonk.orgg",
 		Priority: 0,
 	})
-	emails = append(emails, dto.UserEmail{
+	emails = append(emails, dto.Email{
 		Email:    "monk@wonk.orgg",
 		Priority: 1,
 	})

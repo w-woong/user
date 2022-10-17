@@ -20,11 +20,21 @@ func NewPgUser(db *gorm.DB) *PgUser {
 	}
 }
 
+func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user entity.User) (int64, error) {
+
+	res := tx.(*GormTxController).Tx.WithContext(ctx).Create(&user)
+	if res.Error != nil {
+		logger.Error(res.Error.Error())
+		return 0, ConvertErr(res.Error)
+	}
+
+	return res.RowsAffected, nil
+}
+
 func (a *PgUser) ReadUserByID(ID string) (entity.User, error) {
 	user := entity.User{}
 	// res := a.db.Where("ID = ?", ID).First(&user)
 	res := a.db.Where("ID = ?", ID).
-		Preload("UserSecrets", "user_id = ?", ID).
 		First(&user)
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
@@ -46,17 +56,6 @@ func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx port.TxController, lo
 	}
 
 	return user, nil
-}
-
-func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user entity.User) (int64, error) {
-
-	res := tx.(*GormTxController).Tx.WithContext(ctx).Create(&user)
-	if res.Error != nil {
-		logger.Error(res.Error.Error())
-		return 0, ConvertErr(res.Error)
-	}
-
-	return res.RowsAffected, nil
 }
 
 func (a *PgUser) UpdateUserByID(ID string, user entity.User) (int64, error) {

@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserEmail struct {
+type Email struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
 	CreatedAt *time.Time `gorm:"<-:create"`
 	UpdatedAt *time.Time `gorm:"<-:update"`
@@ -17,21 +17,21 @@ type UserEmail struct {
 	Priority  uint8      `gorm:"type:int;comment:email priority starting from 0"`
 }
 
-func (e *UserEmail) GenerateAndSetID() {
+func (e *Email) GenerateAndSetID() {
 	e.ID = e.generateID()
 }
 
-func (e UserEmail) generateID() string {
+func (e Email) generateID() string {
 	return uuid.New().String()
 }
 
-func (e *UserEmail) RefersUserIDTo(userID string) {
+func (e *Email) RefersUserIDTo(userID string) {
 	e.UserID = userID
 }
 
-type UserEmails []UserEmail
+type Emails []Email
 
-func (e *UserEmails) PrepareToRegister(userID string) error {
+func (e *Emails) PrepareToRegister(userID string) error {
 	if userID == "" {
 		return errors.New("userID was not provided")
 	}

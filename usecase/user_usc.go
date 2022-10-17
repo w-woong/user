@@ -89,15 +89,6 @@ func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID s
 	return nil
 }
 
-func (u *User) ModifyUser(ID string, user dto.User) error {
-	userEntity, err := conv.ToUserEntity(&user)
-	if err != nil {
-		return err
-	}
-	_, err = u.userRepo.UpdateUserByID(ID, userEntity)
-	return err
-}
-
 func (u *User) RemoveUser(ID string) error {
 	_, err := u.userRepo.DeleteUserByID(ID)
 	return err

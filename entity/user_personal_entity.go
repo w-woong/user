@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserPersonal struct {
+type Personal struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
 	CreatedAt *time.Time `gorm:"<-:create"`
 	UpdatedAt *time.Time `gorm:"<-:update"`
@@ -25,17 +25,17 @@ type UserPersonal struct {
 	Nationality string    `gorm:"type:string;size:3;comment:Nationality(ISO 3166-1)"`
 }
 
-func (e *UserPersonal) String() string {
+func (e *Personal) String() string {
 	b, _ := json.Marshal(e)
 	return string(b)
 }
 
 // IsNill returns true if underlying ID is empty.
-func (e UserPersonal) IsNil() bool {
+func (e Personal) IsNil() bool {
 	return e.ID == ""
 }
 
-func (e *UserPersonal) PrepareToRegister(userID string) error {
+func (e *Personal) PrepareToRegister(userID string) error {
 
 	e.GenerateAndSetID()
 	e.RefersUserIDTo(userID)
@@ -43,18 +43,18 @@ func (e *UserPersonal) PrepareToRegister(userID string) error {
 	return nil
 }
 
-func (e *UserPersonal) GenerateAndSetID() {
+func (e *Personal) GenerateAndSetID() {
 	e.ID = e.generateID()
 }
 
-func (e UserPersonal) generateID() string {
+func (e Personal) generateID() string {
 	return uuid.New().String()
 }
 
-func (e *UserPersonal) RefersUserIDTo(userID string) {
+func (e *Personal) RefersUserIDTo(userID string) {
 	e.UserID = userID
 }
 
-func (e *UserPersonal) CombineBirthdate() {
+func (e *Personal) CombineBirthdate() {
 	e.BirthDate = time.Date(e.BirthYear, time.Month(e.BirthMonth), e.BirthDay, 0, 0, 0, 0, time.Local)
 }

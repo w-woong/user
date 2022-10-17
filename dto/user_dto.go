@@ -13,9 +13,9 @@ type User struct {
 	LoginID   string `json:"login_id,omitempty"`
 	LoginType string `json:"login_type,omitempty"`
 
-	Password UserPassword `json:"password"`
-	Personal UserPersonal `json:"personal"`
-	Emails   []UserEmail  `json:"emails,omitempty"`
+	Password Pasword  `json:"password"`
+	Personal Personal `json:"personal"`
+	Emails   []Email  `json:"emails,omitempty"`
 }
 
 var NilUser = User{}

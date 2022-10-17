@@ -16,7 +16,7 @@ type UserUsc interface {
 	FindUserByID(ID string) (dto.User, error)
 
 	// ModifyUser modifies user information with input
-	ModifyUser(ID string, input dto.User) error
+	// ModifyUser(ID string, input dto.User) error
 
 	// RemoveUser removes user with ID
 	RemoveUser(ID string) error

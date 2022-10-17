@@ -21,9 +21,9 @@ func SetRoute(router *mux.Router, conf ConfigHttp) {
 		common.AuthBearerHandler(userHandler.HandleFindByID, conf.BearerToken),
 	).Methods(http.MethodGet)
 
-	router.HandleFunc("/v1/user/{id}",
-		common.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
-	).Methods(http.MethodPut)
+	// router.HandleFunc("/v1/user/{id}",
+	// 	common.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
+	// ).Methods(http.MethodPut)
 
 	router.HandleFunc("/v1/user/{id}",
 		common.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),

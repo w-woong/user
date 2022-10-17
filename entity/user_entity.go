@@ -28,9 +28,9 @@ type User struct {
 	LoginID   string    `gorm:"unique;not null;type:string;size:4096;comment:login id"`
 	LoginType LoginType `gorm:"not null;type:string;size:32;comment:login type"`
 
-	Password UserPassword `gorm:"foreignKey:UserID;references:ID"`
-	Personal UserPersonal `gorm:"foreignKey:UserID;references:ID"`
-	Emails   UserEmails   `gorm:"foreignKey:UserID;references:ID"`
+	Password Password `gorm:"foreignKey:UserID;references:ID"`
+	Personal Personal `gorm:"foreignKey:UserID;references:ID"`
+	Emails   Emails   `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func (e *User) String() string {

@@ -79,34 +79,6 @@ func (d *UserHttpHandler) HandleFindByID(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (d *UserHttpHandler) HandleChangeUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["id"]
-
-	var user dto.User
-	reqBody := common.HttpBody{
-		Document: &user,
-	}
-
-	var err error
-	if err = si.DecodeJson(&reqBody, r.Body); err != nil {
-		common.HttpError(w, http.StatusBadRequest)
-		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
-		return
-	}
-
-	if err = d.userUsc.ModifyUser(ID, user); err != nil {
-		common.HttpError(w, http.StatusInternalServerError)
-		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
-		return
-	}
-
-	if err = si.EncodeJson(w, &common.HttpBodyOK); err != nil {
-		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
-		return
-	}
-}
-
 func (d *UserHttpHandler) HandleRemoveUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["id"]

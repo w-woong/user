@@ -31,14 +31,14 @@ func TestCreateUser(t *testing.T) {
 	personalID := uuid.New().String()
 	passwordID := uuid.New().String()
 
-	emails := make(entity.UserEmails, 0)
-	emails = append(emails, entity.UserEmail{
+	emails := make(entity.Emails, 0)
+	emails = append(emails, entity.Email{
 		ID:       uuid.New().String(),
 		UserID:   userID,
 		Email:    "wonk@wonk.orgg",
 		Priority: 0,
 	})
-	emails = append(emails, entity.UserEmail{
+	emails = append(emails, entity.Email{
 		ID:       uuid.New().String(),
 		UserID:   userID,
 		Email:    "monk@wonk.orgg",
@@ -48,12 +48,12 @@ func TestCreateUser(t *testing.T) {
 		ID:        userID,
 		LoginID:   "wonk1",
 		LoginType: "id",
-		Password: entity.UserPassword{
+		Password: entity.Password{
 			ID:     passwordID,
 			UserID: userID,
 			Value:  "asdfasdfasdf",
 		},
-		Personal: entity.UserPersonal{
+		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
 			BirthDate: birthDate,
@@ -85,7 +85,7 @@ func TestCreateUser2(t *testing.T) {
 	_, err = userRepo.CreateUser(context.Background(), tx, entity.User{
 		ID:      userID,
 		LoginID: "wonk1",
-		Personal: entity.UserPersonal{
+		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
 			BirthDate: birthDate,
@@ -113,7 +113,7 @@ func TestCreateUser3(t *testing.T) {
 
 	userID := uuid.New().String()
 	passwordID := uuid.New().String()
-	password := entity.UserPassword{
+	password := entity.Password{
 		ID:     passwordID,
 		UserID: userID,
 		Value:  "asdf",
@@ -124,7 +124,7 @@ func TestCreateUser3(t *testing.T) {
 		ID:       userID,
 		LoginID:  "wonk3",
 		Password: password,
-		Personal: entity.UserPersonal{
+		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
 			BirthDate: birthDate,
@@ -139,10 +139,42 @@ func TestUpdateUser(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 	var err error
+
+	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
+	personalID := "32d31258-ddd2-419c-9511-c1f1bb23687f"
+	passwordID := "85b8fe01-d979-4e96-84f1-9f48179ce0fd"
+	emails := make(entity.Emails, 0)
+	emails = append(emails, entity.Email{
+		ID:       "8397895b-0e96-428b-8d35-87a74fc7d0e7",
+		UserID:   userID,
+		Email:    "wonk@wonk.orgg",
+		Priority: 0,
+	})
+	emails = append(emails, entity.Email{
+		ID:       "3266dac3-02ea-49b9-aa63-ce50f9b10266",
+		UserID:   userID,
+		Email:    "monk@wonk.orgg",
+		Priority: 1,
+	})
+	birthStr := "2011-10-15T09:10:00+00:00"
+	birthDate, _ := time.Parse(time.RFC3339, birthStr)
+
 	userRepo := adapter.NewPgUser(gdb)
-	_, err = userRepo.UpdateUserByID("85bf6aeb-459c-445a-be1e-0b67b8c100ef", entity.User{
-		ID:      "85bf6aeb-459c-445a-be1e-0b67b8c100ef",
-		LoginID: "wonksing",
+	_, err = userRepo.UpdateUserByID("faad3cfb-a23e-4f17-a580-b7e3bcf8de43", entity.User{
+		ID:        "faad3cfb-a23e-4f17-a580-b7e3bcf8de43",
+		LoginID:   "wonksing",
+		LoginType: "id",
+		Password: entity.Password{
+			ID:     passwordID,
+			UserID: userID,
+			Value:  "a",
+		},
+		Personal: entity.Personal{
+			ID:        personalID,
+			UserID:    userID,
+			BirthDate: birthDate,
+		},
+		Emails: emails,
 	})
 	assert.Nil(t, err)
 }

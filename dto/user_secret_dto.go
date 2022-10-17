@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type UserPassword struct {
+type Pasword struct {
 	ID        string     `json:"id,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
@@ -14,7 +14,7 @@ type UserPassword struct {
 	Value     string     `json:"value,omitempty"`
 }
 
-func (e *UserPassword) String() string {
+func (e *Pasword) String() string {
 	b, _ := json.Marshal(e)
 	return string(b)
 }

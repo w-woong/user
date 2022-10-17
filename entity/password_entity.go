@@ -14,7 +14,9 @@ const (
 	CI
 )
 
-type UserPassword struct {
+var NilPassword = Password{}
+
+type Password struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
 	CreatedAt *time.Time `gorm:"<-:create"`
 	UpdatedAt *time.Time `gorm:"<-:update"`
@@ -23,17 +25,17 @@ type UserPassword struct {
 	Value     string     `gorm:"type:string;size:2048;comment:secret value"`
 }
 
-func (e *UserPassword) String() string {
+func (e *Password) String() string {
 	b, _ := json.Marshal(e)
 	return string(b)
 }
 
 // IsNill returns true if underlying ID is empty.
-func (e UserPassword) IsNil() bool {
+func (e Password) IsNil() bool {
 	return e.ID == ""
 }
 
-func (e *UserPassword) PrepareToRegister(userID string) error {
+func (e *Password) PrepareToRegister(userID string) error {
 
 	e.GenerateAndSetID()
 	e.RefersUserIDTo(userID)
@@ -41,14 +43,14 @@ func (e *UserPassword) PrepareToRegister(userID string) error {
 	return nil
 }
 
-func (e *UserPassword) GenerateAndSetID() {
+func (e *Password) GenerateAndSetID() {
 	e.ID = e.generateID()
 }
 
-func (e UserPassword) generateID() string {
+func (e Password) generateID() string {
 	return uuid.New().String()
 }
 
-func (e *UserPassword) RefersUserIDTo(userID string) {
+func (e *Password) RefersUserIDTo(userID string) {
 	e.UserID = userID
 }

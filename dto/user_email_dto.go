@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type UserEmail struct {
+type Email struct {
 	ID        string     `json:"id,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
@@ -12,8 +12,8 @@ type UserEmail struct {
 	Priority  uint8      `json:"priority"`
 }
 
-var NilUserEmail = UserEmail{}
+var NilEmail = Email{}
 
-func (m UserEmail) IsNil() bool {
+func (m Email) IsNil() bool {
 	return m.ID == ""
 }

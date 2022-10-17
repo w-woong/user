@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type UserPersonal struct {
+type Personal struct {
 	ID        string     `json:"id,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`

@@ -20,12 +20,12 @@ var (
 	userDto = dto.User{
 		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 		LoginID: "wonk",
-		Password: dto.UserPassword{
+		Password: dto.Pasword{
 			ID:     "333cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID: "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			Value:  "asdfasdfasdf",
 		},
-		Personal: dto.UserPersonal{
+		Personal: dto.Personal{
 			ID:          "433cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			FirstName:   "wonk",
