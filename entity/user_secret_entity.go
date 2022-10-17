@@ -3,6 +3,8 @@ package entity
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type SecretType uint
@@ -12,19 +14,41 @@ const (
 	CI
 )
 
-type UserSecret struct {
+type UserPassword struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
-	UserID    string     `gorm:"uniqueIndex:idx_user_secrets_1;type:string;size:64;comment:user id"`
-	Type      SecretType `gorm:"uniqueIndex:idx_user_secrets_1;type:uint;comment:secret type"`
-	Value     string     `gorm:"type:string;size:2048;comment:secret value"`
 	CreatedAt *time.Time `gorm:"<-:create"`
 	UpdatedAt *time.Time `gorm:"<-:update"`
 	DeletedAt *time.Time `gorm:"<-:update"`
+	UserID    string     `gorm:"unique;type:string;size:64;comment:user id"`
+	Value     string     `gorm:"type:string;size:2048;comment:secret value"`
 }
 
-func (e *UserSecret) String() string {
+func (e *UserPassword) String() string {
 	b, _ := json.Marshal(e)
 	return string(b)
 }
 
-type UserSecrets []UserSecret
+// IsNill returns true if underlying ID is empty.
+func (e UserPassword) IsNil() bool {
+	return e.ID == ""
+}
+
+func (e *UserPassword) PrepareToRegister(userID string) error {
+
+	e.GenerateAndSetID()
+	e.RefersUserIDTo(userID)
+
+	return nil
+}
+
+func (e *UserPassword) GenerateAndSetID() {
+	e.ID = e.generateID()
+}
+
+func (e UserPassword) generateID() string {
+	return uuid.New().String()
+}
+
+func (e *UserPassword) RefersUserIDTo(userID string) {
+	e.UserID = userID
+}

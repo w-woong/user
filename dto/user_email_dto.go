@@ -1,20 +1,19 @@
 package dto
 
-import (
-	"encoding/json"
-	"time"
-)
+import "time"
 
-type UserPassword struct {
+type UserEmail struct {
 	ID        string     `json:"id,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	UserID    string     `json:"user_id,omitempty"`
-	Value     string     `json:"value,omitempty"`
+	Email     string     `json:"email"`
+	Priority  uint8      `json:"priority"`
 }
 
-func (e *UserPassword) String() string {
-	b, _ := json.Marshal(e)
-	return string(b)
+var NilUserEmail = UserEmail{}
+
+func (m UserEmail) IsNil() bool {
+	return m.ID == ""
 }

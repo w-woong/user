@@ -12,8 +12,10 @@ import (
 )
 
 func TestToUserEntity(t *testing.T) {
-	src := dto.User{
-		LoginID:     "wonk",
+	password := dto.UserPassword{
+		Value: "asdfasdfasdfasdfasdfasdfasdf",
+	}
+	personal := dto.UserPersonal{
 		FirstName:   "wonk",
 		LastName:    "sun",
 		BirthYear:   2022,
@@ -22,11 +24,27 @@ func TestToUserEntity(t *testing.T) {
 		Gender:      "M",
 		Nationality: "KOR",
 	}
+	emails := make([]dto.UserEmail, 0)
+	emails = append(emails, dto.UserEmail{
+		Email:    "wonk@wonk.orgg",
+		Priority: 0,
+	})
+	emails = append(emails, dto.UserEmail{
+		Email:    "monk@wonk.orgg",
+		Priority: 1,
+	})
+	src := dto.User{
+		LoginID:   "wonk",
+		LoginType: "id",
+		Password:  password,
+		Personal:  personal,
+		Emails:    emails,
+	}
 
 	res, err := conv.ToUserEntity(&src)
 	assert.Nil(t, err)
 
-	fmt.Println(res)
+	fmt.Println(res.String())
 }
 
 func TestFixedZone(t *testing.T) {

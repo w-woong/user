@@ -281,8 +281,8 @@ github.com/subosito/gotenv v1.4.1 h1:jyEFiXpy21Wm81FBN71l9VoMMV8H8jG+qIK3GCpY6Qs
 github.com/subosito/gotenv v1.4.1/go.mod h1:ayKnFf/c6rvx/2iiLrJUk1e6plDbT3edrFNGqEflhK0=
 github.com/w-woong/common v0.0.6 h1:dKUeoC57yAcqAPJ7BQBAs7I2SO6+0OEzL1/9uWpZZX0=
 github.com/w-woong/common v0.0.6/go.mod h1:UYKTxcPk2svktkJa2j5WnTk/y3oh1IiPJ9Degt8ZEKo=
-github.com/wonksing/structmapper v0.0.2 h1:Vw97uwLVnFP2bbiEs3dB3jmiUfF/WyH4XTDVZrbiduI=
-github.com/wonksing/structmapper v0.0.2/go.mod h1:adymR5XTDyTNUuUWHZNE5ODPwNCMQl2MAm+IggQCCKE=
+github.com/wonksing/structmapper v0.0.3 h1:Mj+jCVKn/Omw8nppug64p2NyqTC4drN/nbtgaRpuRv8=
+github.com/wonksing/structmapper v0.0.3/go.mod h1:adymR5XTDyTNUuUWHZNE5ODPwNCMQl2MAm+IggQCCKE=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

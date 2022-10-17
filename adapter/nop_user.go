@@ -15,9 +15,7 @@ func NewNopUser() *NopUser {
 // ReadUserByID returns fixed dto.User
 func (a *NopUser) ReadUserByID(ID string) (dto.User, error) {
 	return dto.User{
-		ID:        ID,
-		LoginID:   "wonk@wonk.orgg",
-		FirstName: "wonk",
-		LastName:  "sun",
+		ID:      ID,
+		LoginID: "wonk@wonk.orgg",
 	}, nil
 }

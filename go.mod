@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.8.0
 	github.com/w-woong/common v0.0.6
-	github.com/wonksing/structmapper v0.0.2
+	github.com/wonksing/structmapper v0.0.3
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.24.0
 )

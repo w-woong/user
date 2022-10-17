@@ -18,14 +18,25 @@ import (
 
 var (
 	userDto = dto.User{
-		ID:         "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
-		LoginID:    "wonk",
-		FirstName:  "wonk",
-		LastName:   "sun",
-		BirthYear:  2002,
-		BirthMonth: 1,
-		BirthDay:   2,
-		BirthDate:  time.Date(2002, 1, 2, 0, 0, 0, 0, time.Local),
+		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
+		LoginID: "wonk",
+		Password: dto.UserPassword{
+			ID:     "333cbf79-ca5f-42dc-8ca0-29441209a36a",
+			UserID: "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
+			Value:  "asdfasdfasdf",
+		},
+		Personal: dto.UserPersonal{
+			ID:          "433cbf79-ca5f-42dc-8ca0-29441209a36a",
+			UserID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
+			FirstName:   "wonk",
+			LastName:    "sun",
+			BirthYear:   2002,
+			BirthMonth:  1,
+			BirthDay:    2,
+			BirthDate:   time.Date(2002, 1, 2, 0, 0, 0, 0, time.Local),
+			Gender:      "M",
+			Nationality: "KOR",
+		},
 	}
 )
 
@@ -33,7 +44,7 @@ func TestUploadAppfileScannedItem(t *testing.T) {
 	urlPath := "/v1/user/{id}"
 	ctrl := gomock.NewController(t)
 	usc := mocks.NewMockUserUsc(ctrl)
-	usc.EXPECT().FindUserByID("22bcbf79-ca5f-42dc-8ca0-29441209a36a").
+	usc.EXPECT().FindUserByID(userDto.ID).
 		Return(userDto, nil).AnyTimes()
 
 	router := mux.NewRouter()

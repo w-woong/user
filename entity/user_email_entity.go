@@ -9,11 +9,12 @@ import (
 
 type UserEmail struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
-	UserID    string     `gorm:"type:string;size:64;comment:user id"`
-	Email     string     `gorm:"type:string;size:256;comment:email"`
 	CreatedAt *time.Time `gorm:"<-:create"`
 	UpdatedAt *time.Time `gorm:"<-:update"`
 	DeletedAt *time.Time `gorm:"<-:update"`
+	UserID    string     `gorm:"type:string;size:64;comment:user id"`
+	Email     string     `gorm:"type:string;size:256;comment:email"`
+	Priority  uint8      `gorm:"type:int;comment:email priority starting from 0"`
 }
 
 func (e *UserEmail) GenerateAndSetID() {

@@ -1,8 +1,6 @@
 package conv
 
 import (
-	"time"
-
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"github.com/wonksing/structmapper"
@@ -15,9 +13,10 @@ func init() {
 
 // ToUserEntity converts dto.User to entity.User
 func ToUserEntity(src *dto.User) (user entity.User, err error) {
-	src.BirthDate = time.Date(src.BirthYear, time.Month(src.BirthMonth), src.BirthDay, 0, 0, 0, 0, time.UTC)
+	// src.BirthDate = time.Date(src.BirthYear, time.Month(src.BirthMonth), src.BirthDay, 0, 0, 0, 0, time.UTC)
 
 	err = structmapper.Map(src, &user)
+	user.Personal.CombineBirthdate()
 	return
 }
 
