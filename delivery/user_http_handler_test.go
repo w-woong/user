@@ -40,11 +40,11 @@ var (
 	}
 )
 
-func TestUploadAppfileScannedItem(t *testing.T) {
+func TestHandleFindUserByID(t *testing.T) {
 	urlPath := "/v1/user/{id}"
 	ctrl := gomock.NewController(t)
 	usc := mocks.NewMockUserUsc(ctrl)
-	usc.EXPECT().FindUserByID(userDto.ID).
+	usc.EXPECT().FindUserByID(gomock.Any(), userDto.ID).
 		Return(userDto, nil).AnyTimes()
 
 	router := mux.NewRouter()

@@ -10,10 +10,12 @@ import (
 
 type UserRepo interface {
 	// ReadUserByID reads user by ID.
-	ReadUserByID(ID string) (entity.User, error)
+	ReadUserByID(ctx context.Context, tx TxController, ID string) (entity.User, error)
+	ReadUserByIDNoTx(ctx context.Context, ID string) (entity.User, error)
 
 	// ReadUserByLoginID reads user by loginID.
 	ReadUserByLoginID(ctx context.Context, tx TxController, loginID string) (entity.User, error)
+	ReadUserByLoginIDNoTx(ctx context.Context, loginID string) (entity.User, error)
 
 	// CreateUser creates a new user.
 	CreateUser(ctx context.Context, tx TxController, user entity.User) (int64, error)
@@ -22,7 +24,7 @@ type UserRepo interface {
 	// UpdateUserByID(ID string, user entity.User) (int64, error)
 
 	// DeleteUserByID deletes user with ID.
-	DeleteUserByID(ID string) (int64, error)
+	DeleteUserByID(ctx context.Context, tx TxController, ID string) (int64, error)
 }
 
 type PasswordRepo interface {

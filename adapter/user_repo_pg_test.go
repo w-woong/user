@@ -134,51 +134,6 @@ func TestCreateUser3(t *testing.T) {
 	assert.Nil(t, tx.Commit())
 }
 
-func TestUpdateUser(t *testing.T) {
-	if !onlinetest {
-		t.Skip("skipping online tests")
-	}
-	var err error
-
-	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
-	personalID := "32d31258-ddd2-419c-9511-c1f1bb23687f"
-	passwordID := "85b8fe01-d979-4e96-84f1-9f48179ce0fd"
-	emails := make(entity.Emails, 0)
-	emails = append(emails, entity.Email{
-		ID:       "8397895b-0e96-428b-8d35-87a74fc7d0e7",
-		UserID:   userID,
-		Email:    "wonk@wonk.orgg",
-		Priority: 0,
-	})
-	emails = append(emails, entity.Email{
-		ID:       "3266dac3-02ea-49b9-aa63-ce50f9b10266",
-		UserID:   userID,
-		Email:    "monk@wonk.orgg",
-		Priority: 1,
-	})
-	birthStr := "2011-10-15T09:10:00+00:00"
-	birthDate, _ := time.Parse(time.RFC3339, birthStr)
-
-	userRepo := adapter.NewPgUser(gdb)
-	_, err = userRepo.UpdateUserByID("faad3cfb-a23e-4f17-a580-b7e3bcf8de43", entity.User{
-		ID:        "faad3cfb-a23e-4f17-a580-b7e3bcf8de43",
-		LoginID:   "wonksing",
-		LoginType: "id",
-		Password: entity.Password{
-			ID:     passwordID,
-			UserID: userID,
-			Value:  "a",
-		},
-		Personal: entity.Personal{
-			ID:        personalID,
-			UserID:    userID,
-			BirthDate: birthDate,
-		},
-		Emails: emails,
-	})
-	assert.Nil(t, err)
-}
-
 func TestUpdateUserBirthDate(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")

@@ -64,8 +64,8 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	return conv.ToUserDto(&user)
 }
 
-func (u *User) FindUserByID(ID string) (dto.User, error) {
-	user, err := u.userRepo.ReadUserByID(ID)
+func (u *User) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
+	user, err := u.userRepo.ReadUserByIDNoTx(ctx, ID)
 	if err != nil {
 		return dto.NilUser, err
 	}
@@ -89,9 +89,19 @@ func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID s
 	return nil
 }
 
-func (u *User) RemoveUser(ID string) error {
-	_, err := u.userRepo.DeleteUserByID(ID)
-	return err
+func (u *User) RemoveUser(ctx context.Context, ID string) error {
+	tx, err := u.txBeginner.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	_, err = u.userRepo.DeleteUserByID(ctx, tx, ID)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) error {

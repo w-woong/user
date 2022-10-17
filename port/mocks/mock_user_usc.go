@@ -36,18 +36,18 @@ func (m *MockUserUsc) EXPECT() *MockUserUscMockRecorder {
 }
 
 // FindUserByID mocks base method.
-func (m *MockUserUsc) FindUserByID(ID string) (dto.User, error) {
+func (m *MockUserUsc) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindUserByID", ID)
+	ret := m.ctrl.Call(m, "FindUserByID", ctx, ID)
 	ret0, _ := ret[0].(dto.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindUserByID indicates an expected call of FindUserByID.
-func (mr *MockUserUscMockRecorder) FindUserByID(ID interface{}) *gomock.Call {
+func (mr *MockUserUscMockRecorder) FindUserByID(ctx, ID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByID", reflect.TypeOf((*MockUserUsc)(nil).FindUserByID), ID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByID", reflect.TypeOf((*MockUserUsc)(nil).FindUserByID), ctx, ID)
 }
 
 // LoginWithPassword mocks base method.
@@ -80,15 +80,15 @@ func (mr *MockUserUscMockRecorder) RegisterUser(ctx, input interface{}) *gomock.
 }
 
 // RemoveUser mocks base method.
-func (m *MockUserUsc) RemoveUser(ID string) error {
+func (m *MockUserUsc) RemoveUser(ctx context.Context, ID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveUser", ID)
+	ret := m.ctrl.Call(m, "RemoveUser", ctx, ID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RemoveUser indicates an expected call of RemoveUser.
-func (mr *MockUserUscMockRecorder) RemoveUser(ID interface{}) *gomock.Call {
+func (mr *MockUserUscMockRecorder) RemoveUser(ctx, ID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveUser", reflect.TypeOf((*MockUserUsc)(nil).RemoveUser), ID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveUser", reflect.TypeOf((*MockUserUsc)(nil).RemoveUser), ctx, ID)
 }

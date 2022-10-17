@@ -13,13 +13,13 @@ type UserUsc interface {
 	RegisterUser(ctx context.Context, input dto.User) (dto.User, error)
 
 	// FindUserByID finds user with ID
-	FindUserByID(ID string) (dto.User, error)
+	FindUserByID(ctx context.Context, ID string) (dto.User, error)
 
 	// ModifyUser modifies user information with input
 	// ModifyUser(ID string, input dto.User) error
 
 	// RemoveUser removes user with ID
-	RemoveUser(ID string) error
+	RemoveUser(ctx context.Context, ID string) error
 
 	LoginWithPassword(ctx context.Context, loginID, password string) error
 }

@@ -61,7 +61,7 @@ func (d *UserHttpHandler) HandleFindByID(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	ID := vars["id"]
 
-	user, err := d.userUsc.FindUserByID(ID)
+	user, err := d.userUsc.FindUserByID(r.Context(), ID)
 	if err != nil {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
@@ -84,7 +84,7 @@ func (d *UserHttpHandler) HandleRemoveUser(w http.ResponseWriter, r *http.Reques
 	ID := vars["id"]
 
 	var err error
-	if err = d.userUsc.RemoveUser(ID); err != nil {
+	if err = d.userUsc.RemoveUser(r.Context(), ID); err != nil {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
 		return
