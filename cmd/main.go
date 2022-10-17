@@ -103,7 +103,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	gormDB.AutoMigrate(&entity.User{}, &entity.UserEmail{})
+	gormDB.AutoMigrate(&entity.User{}, &entity.UserEmail{}, &entity.UserSecret{})
 
 	var userUsc port.UserUsc
 	switch conf.Server.Repo.Driver {

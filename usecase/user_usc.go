@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/w-woong/common"
@@ -100,4 +101,20 @@ func (u *User) ModifyUser(ID string, user dto.User) error {
 func (u *User) RemoveUser(ID string) error {
 	_, err := u.userRepo.DeleteUserByID(ID)
 	return err
+}
+
+func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) error {
+	tx, err := u.txBeginner.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	user, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(user)
+	return nil
 }

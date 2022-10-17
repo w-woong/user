@@ -27,7 +27,8 @@ type User struct {
 	UpdatedAt   *time.Time `gorm:"<-:update"`
 	DeletedAt   *time.Time `gorm:"<-:update"`
 
-	UserEmails UserEmails `gorm:"foreignKey:UserID;references:ID"`
+	UserEmails  UserEmails  `gorm:"foreignKey:UserID;references:ID"`
+	UserSecrets UserSecrets `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func (e *User) String() string {

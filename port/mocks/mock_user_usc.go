@@ -50,6 +50,20 @@ func (mr *MockUserUscMockRecorder) FindUserByID(ID interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByID", reflect.TypeOf((*MockUserUsc)(nil).FindUserByID), ID)
 }
 
+// LoginWithPassword mocks base method.
+func (m *MockUserUsc) LoginWithPassword(ctx context.Context, loginID, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoginWithPassword", ctx, loginID, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LoginWithPassword indicates an expected call of LoginWithPassword.
+func (mr *MockUserUscMockRecorder) LoginWithPassword(ctx, loginID, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginWithPassword", reflect.TypeOf((*MockUserUsc)(nil).LoginWithPassword), ctx, loginID, password)
+}
+
 // ModifyUser mocks base method.
 func (m *MockUserUsc) ModifyUser(ID string, input dto.User) error {
 	m.ctrl.T.Helper()

@@ -20,4 +20,6 @@ type UserUsc interface {
 
 	// RemoveUser removes user with ID
 	RemoveUser(ID string) error
+
+	LoginWithPassword(ctx context.Context, loginID, password string) error
 }

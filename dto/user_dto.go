@@ -62,12 +62,3 @@ type UserAddress struct {
 	Created    time.Time `json:"created"`
 	Modified   time.Time `json:"modified"`
 }
-
-type UserSecret struct {
-	ID       string    `json:"id"`
-	UserID   string    `json:"user_id"`
-	Type     string    `json:"type"`
-	Value    string    `json:"value"`
-	Created  time.Time `json:"created"`
-	Modified time.Time `json:"modified"`
-}

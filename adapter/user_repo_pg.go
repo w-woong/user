@@ -22,7 +22,10 @@ func NewPgUser(db *gorm.DB) *PgUser {
 
 func (a *PgUser) ReadUserByID(ID string) (entity.User, error) {
 	user := entity.User{}
-	res := a.db.Where("ID = ?", ID).First(&user)
+	// res := a.db.Where("ID = ?", ID).First(&user)
+	res := a.db.Where("ID = ?", ID).
+		Preload("UserSecrets", "user_id = ?", ID).
+		First(&user)
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return entity.NilUser, ConvertErr(res.Error)
