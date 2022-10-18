@@ -23,3 +23,7 @@ type UserUsc interface {
 
 	LoginWithPassword(ctx context.Context, loginID, password string) error
 }
+
+type Authenticator interface {
+	Authenticate(ctx context.Context) error
+}

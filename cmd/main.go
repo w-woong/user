@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"runtime"
 	"strings"
@@ -17,6 +18,7 @@ import (
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/configs"
 	"github.com/w-woong/common/logger"
+	"github.com/w-woong/user"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
 	"github.com/w-woong/user/entity"
@@ -70,19 +72,22 @@ func main() {
 	runtime.GOMAXPROCS(maxProc)
 
 	// config
-	conf := Config{}
+	conf := user.Config{}
 	if err := configs.ReadConfigInto(configName, &conf); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	// logger
-	logger.Open(conf.Logger.Level, conf.Logger.Stdout, conf.Logger.File.Name, conf.Logger.File.MaxSize, conf.Logger.File.MaxBackup, conf.Logger.File.MaxAge, conf.Logger.File.Compressed)
+	logger.Open(conf.Logger.Level, conf.Logger.Stdout,
+		conf.Logger.File.Name, conf.Logger.File.MaxSize, conf.Logger.File.MaxBackup,
+		conf.Logger.File.MaxAge, conf.Logger.File.Compressed)
 	defer logger.Close()
 
 	// db
 	sqlDB, err := si.OpenSqlDB(conf.Server.Repo.Driver, conf.Server.Repo.ConnStr,
-		conf.Server.Repo.MaxIdleConns, conf.Server.Repo.MaxOpenConns, time.Duration(conf.Server.Repo.ConnMaxLifetimeMinutes)*time.Minute)
+		conf.Server.Repo.MaxIdleConns, conf.Server.Repo.MaxOpenConns,
+		time.Duration(conf.Server.Repo.ConnMaxLifetimeMinutes)*time.Minute)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -105,12 +110,14 @@ func main() {
 
 	gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{})
 
+	var pwRepo port.PasswordRepo
 	var userUsc port.UserUsc
 	switch conf.Server.Repo.Driver {
 	case "pgx":
 		txBeginner := adapter.NewGormTxBeginner(gormDB)
 		userRepo := adapter.NewPgUser(gormDB)
-		userUsc = usecase.NewUser(txBeginner, userRepo, defaultTimeout)
+		pwRepo = adapter.NewPgPassword(gormDB)
+		userUsc = usecase.NewUser(txBeginner, userRepo, pwRepo, defaultTimeout)
 	default:
 		logger.Error(conf.Server.Repo.Driver + " is not allowed")
 		os.Exit(1)
@@ -151,4 +158,27 @@ func main() {
 	ticker.Stop()
 	tickerDone <- true
 	logger.Info("finished")
+}
+
+var (
+	userHandler *delivery.UserHttpHandler
+)
+
+func SetRoute(router *mux.Router, conf user.ConfigHttp) {
+	router.HandleFunc("/v1/user",
+		common.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
+	).Methods(http.MethodPost)
+
+	router.HandleFunc("/v1/user/{id}",
+		common.AuthBearerHandler(userHandler.HandleFindByID, conf.BearerToken),
+	).Methods(http.MethodGet)
+
+	// router.HandleFunc("/v1/user/{id}",
+	// 	common.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
+	// ).Methods(http.MethodPut)
+
+	router.HandleFunc("/v1/user/{id}",
+		common.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
+	).Methods(http.MethodDelete)
+
 }

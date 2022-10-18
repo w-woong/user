@@ -9,7 +9,7 @@ import (
 	"github.com/w-woong/user/adapter"
 )
 
-func TestUpdateValueByUserID(t *testing.T) {
+func TestUpdateByUserID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
@@ -24,7 +24,7 @@ func TestUpdateValueByUserID(t *testing.T) {
 
 	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
 
-	_, err = userRepo.UpdateValueByUserID(context.Background(), tx, "a", userID)
+	_, err = userRepo.UpdateByUserID(context.Background(), tx, "a", userID)
 	assert.Nil(t, err)
 	assert.Nil(t, tx.Commit())
 }
@@ -62,4 +62,24 @@ func TestReadByUserIDNoTx(t *testing.T) {
 	assert.Nil(t, err)
 
 	fmt.Println(password)
+}
+
+func TestDeleteByUserID(t *testing.T) {
+	if !onlinetest {
+		t.Skip("skipping online tests")
+	}
+	txBeginner := adapter.NewGormTxBeginner(gdb)
+	userRepo := adapter.NewPgPassword(gdb)
+
+	tx, err := txBeginner.Begin()
+	assert.Nil(t, err)
+	defer tx.Rollback()
+
+	userID := "c85f631f-f22c-4be5-bfab-e17d5d37f484"
+
+	rowsAffected, err := userRepo.DeleteByUserID(context.Background(), tx, userID)
+	assert.Nil(t, err)
+	assert.Nil(t, tx.Commit())
+
+	fmt.Println(rowsAffected)
 }

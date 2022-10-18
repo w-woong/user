@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -16,6 +17,11 @@ type User struct {
 	Password Pasword  `json:"password"`
 	Personal Personal `json:"personal"`
 	Emails   []Email  `json:"emails,omitempty"`
+}
+
+func (d *User) String() string {
+	b, _ := json.Marshal(d)
+	return string(b)
 }
 
 var NilUser = User{}

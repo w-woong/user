@@ -8,6 +8,7 @@ import (
 
 	"github.com/w-woong/common"
 	"github.com/w-woong/user/dto"
+	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
 	"github.com/w-woong/user/usecase/conv"
 )
@@ -15,13 +16,16 @@ import (
 type User struct {
 	txBeginner     port.TxBeginner
 	userRepo       port.UserRepo
+	pwRepo         port.PasswordRepo
 	defaultTimeout time.Duration
 }
 
-func NewUser(txBeginner port.TxBeginner, userRepo port.UserRepo, defaultTimeout time.Duration) *User {
+func NewUser(txBeginner port.TxBeginner,
+	userRepo port.UserRepo, pwRepo port.PasswordRepo, defaultTimeout time.Duration) *User {
 	return &User{
 		txBeginner:     txBeginner,
 		userRepo:       userRepo,
+		pwRepo:         pwRepo,
 		defaultTimeout: defaultTimeout,
 	}
 }
@@ -116,6 +120,43 @@ func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) 
 		return err
 	}
 
+	var auth port.Authenticator
+	switch user.LoginType {
+	case entity.IDLoginType:
+		fallthrough
+	case entity.EmailLoginType:
+		auth = &PasswordAuthenticator{
+			UserID:       user.ID,
+			Password:     password,
+			PasswordRepo: u.pwRepo,
+			Tx:           tx,
+		}
+	default:
+		return errors.New("unsupported login_type, " + string(user.LoginType))
+	}
+
+	if err = auth.Authenticate(ctx); err != nil {
+		return err
+	}
+
 	fmt.Println(user)
+	return nil
+}
+
+type PasswordAuthenticator struct {
+	UserID       string
+	Password     string
+	PasswordRepo port.PasswordRepo
+	Tx           port.TxController
+}
+
+func (u *PasswordAuthenticator) Authenticate(ctx context.Context) error {
+	pw, err := u.PasswordRepo.ReadByUserID(ctx, u.Tx, u.UserID)
+	if err != nil {
+		return err
+	}
+	if u.Password != pw.Value {
+		return errors.New("incorrect user id and password")
+	}
 	return nil
 }

@@ -18,7 +18,7 @@ func NewPgPassword(db *gorm.DB) *PgPassword {
 		db: db,
 	}
 }
-func (a *PgPassword) UpdateValueByUserID(ctx context.Context, tx port.TxController, value string, userID string) (int64, error) {
+func (a *PgPassword) UpdateByUserID(ctx context.Context, tx port.TxController, value string, userID string) (int64, error) {
 	// res := a.db.Save(&user)
 	res := tx.(*GormTxController).Tx.WithContext(ctx).
 		Model(&entity.Password{}).
@@ -52,4 +52,14 @@ func (a *PgPassword) readByUserID(ctx context.Context, db *gorm.DB, userID strin
 	}
 
 	return password, nil
+}
+
+func (a *PgPassword) DeleteByUserID(ctx context.Context, tx port.TxController, userID string) (int64, error) {
+	res := tx.(*GormTxController).Tx.WithContext(ctx).
+		Where("user_id = ?", userID).
+		Delete(&entity.Password{})
+	if res.Error != nil {
+		return 0, ConvertErr(res.Error)
+	}
+	return res.RowsAffected, nil
 }

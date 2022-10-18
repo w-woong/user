@@ -32,4 +32,6 @@ type PasswordRepo interface {
 
 	ReadByUserID(ctx context.Context, tx TxController, userID string) (entity.Password, error)
 	ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error)
+
+	DeleteByUserID(ctx context.Context, tx TxController, userID string) (int64, error)
 }
