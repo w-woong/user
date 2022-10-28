@@ -3,10 +3,10 @@ package adapter
 import (
 	"context"
 
+	"github.com/w-woong/common"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
-	"github.com/w-woong/user/port"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +20,7 @@ func NewPgUser(db *gorm.DB) *PgUser {
 	}
 }
 
-func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user entity.User) (int64, error) {
+func (a *PgUser) CreateUser(ctx context.Context, tx common.TxController, user entity.User) (int64, error) {
 
 	res := tx.(*GormTxController).Tx.WithContext(ctx).Create(&user)
 	if res.Error != nil {
@@ -31,7 +31,7 @@ func (a *PgUser) CreateUser(ctx context.Context, tx port.TxController, user enti
 	return res.RowsAffected, nil
 }
 
-func (a *PgUser) ReadUserByID(ctx context.Context, tx port.TxController, ID string) (entity.User, error) {
+func (a *PgUser) ReadUserByID(ctx context.Context, tx common.TxController, ID string) (entity.User, error) {
 	return a.readByID(ctx, tx.(*GormTxController).Tx, ID)
 }
 func (a *PgUser) ReadUserByIDNoTx(ctx context.Context, ID string) (entity.User, error) {
@@ -50,7 +50,7 @@ func (a *PgUser) readByID(ctx context.Context, db *gorm.DB, ID string) (entity.U
 	return user, nil
 }
 
-func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx port.TxController, loginID string) (entity.User, error) {
+func (a *PgUser) ReadUserByLoginID(ctx context.Context, tx common.TxController, loginID string) (entity.User, error) {
 	return a.readByLoginID(ctx, tx.(*GormTxController).Tx, loginID)
 }
 func (a *PgUser) ReadUserByLoginIDNoTx(ctx context.Context, loginID string) (entity.User, error) {
@@ -83,7 +83,7 @@ func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string)
 // 	return res.RowsAffected, nil
 // }
 
-func (a *PgUser) DeleteUserByID(ctx context.Context, tx port.TxController, ID string) (int64, error) {
+func (a *PgUser) DeleteUserByID(ctx context.Context, tx common.TxController, ID string) (int64, error) {
 	res := tx.(*GormTxController).Tx.WithContext(ctx).Delete(&dto.User{ID: ID})
 	if res.Error != nil {
 		logger.Error(res.Error.Error())

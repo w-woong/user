@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	common "github.com/w-woong/common"
 	entity "github.com/w-woong/user/entity"
-	port "github.com/w-woong/user/port"
 )
 
 // MockUserRepo is a mock of UserRepo interface.
@@ -37,7 +37,7 @@ func (m *MockUserRepo) EXPECT() *MockUserRepoMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUserRepo) CreateUser(ctx context.Context, tx port.TxController, user entity.User) (int64, error) {
+func (m *MockUserRepo) CreateUser(ctx context.Context, tx common.TxController, user entity.User) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, tx, user)
 	ret0, _ := ret[0].(int64)
@@ -52,7 +52,7 @@ func (mr *MockUserRepoMockRecorder) CreateUser(ctx, tx, user interface{}) *gomoc
 }
 
 // DeleteUserByID mocks base method.
-func (m *MockUserRepo) DeleteUserByID(ctx context.Context, tx port.TxController, ID string) (int64, error) {
+func (m *MockUserRepo) DeleteUserByID(ctx context.Context, tx common.TxController, ID string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteUserByID", ctx, tx, ID)
 	ret0, _ := ret[0].(int64)
@@ -67,7 +67,7 @@ func (mr *MockUserRepoMockRecorder) DeleteUserByID(ctx, tx, ID interface{}) *gom
 }
 
 // ReadUserByID mocks base method.
-func (m *MockUserRepo) ReadUserByID(ctx context.Context, tx port.TxController, ID string) (entity.User, error) {
+func (m *MockUserRepo) ReadUserByID(ctx context.Context, tx common.TxController, ID string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadUserByID", ctx, tx, ID)
 	ret0, _ := ret[0].(entity.User)
@@ -97,7 +97,7 @@ func (mr *MockUserRepoMockRecorder) ReadUserByIDNoTx(ctx, ID interface{}) *gomoc
 }
 
 // ReadUserByLoginID mocks base method.
-func (m *MockUserRepo) ReadUserByLoginID(ctx context.Context, tx port.TxController, loginID string) (entity.User, error) {
+func (m *MockUserRepo) ReadUserByLoginID(ctx context.Context, tx common.TxController, loginID string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadUserByLoginID", ctx, tx, loginID)
 	ret0, _ := ret[0].(entity.User)
@@ -149,8 +149,23 @@ func (m *MockPasswordRepo) EXPECT() *MockPasswordRepoMockRecorder {
 	return m.recorder
 }
 
+// DeleteByUserID mocks base method.
+func (m *MockPasswordRepo) DeleteByUserID(ctx context.Context, tx common.TxController, userID string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByUserID", ctx, tx, userID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteByUserID indicates an expected call of DeleteByUserID.
+func (mr *MockPasswordRepoMockRecorder) DeleteByUserID(ctx, tx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByUserID", reflect.TypeOf((*MockPasswordRepo)(nil).DeleteByUserID), ctx, tx, userID)
+}
+
 // ReadByUserID mocks base method.
-func (m *MockPasswordRepo) ReadByUserID(ctx context.Context, tx port.TxController, userID string) (entity.Password, error) {
+func (m *MockPasswordRepo) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadByUserID", ctx, tx, userID)
 	ret0, _ := ret[0].(entity.Password)
@@ -180,7 +195,7 @@ func (mr *MockPasswordRepoMockRecorder) ReadByUserIDNoTx(ctx, userID interface{}
 }
 
 // UpdateByUserID mocks base method.
-func (m *MockPasswordRepo) UpdateByUserID(ctx context.Context, tx port.TxController, value, userID string) (int64, error) {
+func (m *MockPasswordRepo) UpdateByUserID(ctx context.Context, tx common.TxController, value, userID string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateByUserID", ctx, tx, value, userID)
 	ret0, _ := ret[0].(int64)

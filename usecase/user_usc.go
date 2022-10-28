@@ -7,20 +7,20 @@ import (
 	"time"
 
 	"github.com/w-woong/common"
+	"github.com/w-woong/user/conv"
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
-	"github.com/w-woong/user/usecase/conv"
 )
 
 type User struct {
-	txBeginner     port.TxBeginner
+	txBeginner     common.TxBeginner
 	userRepo       port.UserRepo
 	pwRepo         port.PasswordRepo
 	defaultTimeout time.Duration
 }
 
-func NewUser(txBeginner port.TxBeginner,
+func NewUser(txBeginner common.TxBeginner,
 	userRepo port.UserRepo, pwRepo port.PasswordRepo, defaultTimeout time.Duration) *User {
 	return &User{
 		txBeginner:     txBeginner,
@@ -79,7 +79,7 @@ func (u *User) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
 
 // takenLoginID checks if loginID is already taken.
 // Returns nil if loginID is available.
-func (u *User) takenLoginID(ctx context.Context, tx port.TxController, loginID string) error {
+func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {
 	foundUser, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
 	if err != nil {
 		if !errors.Is(err, common.ErrRecordNotFound) {
@@ -147,7 +147,7 @@ type PasswordAuthenticator struct {
 	UserID       string
 	Password     string
 	PasswordRepo port.PasswordRepo
-	Tx           port.TxController
+	Tx           common.TxController
 }
 
 func (u *PasswordAuthenticator) Authenticate(ctx context.Context) error {

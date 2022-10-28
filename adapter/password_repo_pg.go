@@ -3,9 +3,9 @@ package adapter
 import (
 	"context"
 
+	"github.com/w-woong/common"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/user/entity"
-	"github.com/w-woong/user/port"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +18,7 @@ func NewPgPassword(db *gorm.DB) *PgPassword {
 		db: db,
 	}
 }
-func (a *PgPassword) UpdateByUserID(ctx context.Context, tx port.TxController, value string, userID string) (int64, error) {
+func (a *PgPassword) UpdateByUserID(ctx context.Context, tx common.TxController, value string, userID string) (int64, error) {
 	// res := a.db.Save(&user)
 	res := tx.(*GormTxController).Tx.WithContext(ctx).
 		Model(&entity.Password{}).
@@ -32,7 +32,7 @@ func (a *PgPassword) UpdateByUserID(ctx context.Context, tx port.TxController, v
 	return res.RowsAffected, nil
 }
 
-func (a *PgPassword) ReadByUserID(ctx context.Context, tx port.TxController, userID string) (entity.Password, error) {
+func (a *PgPassword) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error) {
 	return a.readByUserID(ctx, tx.(*GormTxController).Tx, userID)
 }
 
@@ -54,7 +54,7 @@ func (a *PgPassword) readByUserID(ctx context.Context, db *gorm.DB, userID strin
 	return password, nil
 }
 
-func (a *PgPassword) DeleteByUserID(ctx context.Context, tx port.TxController, userID string) (int64, error) {
+func (a *PgPassword) DeleteByUserID(ctx context.Context, tx common.TxController, userID string) (int64, error) {
 	res := tx.(*GormTxController).Tx.WithContext(ctx).
 		Where("user_id = ?", userID).
 		Delete(&entity.Password{})
