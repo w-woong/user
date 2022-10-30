@@ -76,8 +76,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2
 github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
 github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
-github.com/go-wonk/si v0.2.6 h1:xOcRubh0S7ixIUplryBHoIuCKxgEr1nKzLKUCmPlMDM=
-github.com/go-wonk/si v0.2.6/go.mod h1:+DoaNjQK/z1vMzJvdhF3K2oyJf6QBe9Kqmfv6t1Saqo=
+github.com/go-wonk/si v0.2.7 h1:LULfm+lZq/c9251NtEqln4CS558nLRSgjtbjYoasduo=
+github.com/go-wonk/si v0.2.7/go.mod h1:+DoaNjQK/z1vMzJvdhF3K2oyJf6QBe9Kqmfv6t1Saqo=
 github.com/gofrs/uuid v4.0.0+incompatible h1:1SD/1F5pU8p29ybwgQSwpQk+mwdRrXCYuPhW6m+TnJw=
 github.com/gofrs/uuid v4.0.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/golang-jwt/jwt/v4 v4.4.2 h1:rcc4lwaZgFMCZ5jxF9ABolDcIHdBytAFgqFPbSJQAYs=
@@ -279,8 +279,8 @@ github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PK
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/subosito/gotenv v1.4.1 h1:jyEFiXpy21Wm81FBN71l9VoMMV8H8jG+qIK3GCpY6Qs=
 github.com/subosito/gotenv v1.4.1/go.mod h1:ayKnFf/c6rvx/2iiLrJUk1e6plDbT3edrFNGqEflhK0=
-github.com/w-woong/common v0.0.8 h1:AcOJwljrTAAAc37oUWCf3654Voq53F3u+8T39SkmoO8=
-github.com/w-woong/common v0.0.8/go.mod h1:K25/Ln1NdyuxidrJP+yZN3bHZ4u/B6g7v9eL4tgq1oU=
+github.com/w-woong/common v0.0.11 h1:ihzgsLpdau0FNOBG4mjNCv2GUQk521jQWo7uOvXGWWY=
+github.com/w-woong/common v0.0.11/go.mod h1:wtqiJ7ftkMIt5hJeW5yh2AL9NjoZ5FMawh7iVXMtPLo=
 github.com/wonksing/structmapper v0.0.3 h1:Mj+jCVKn/Omw8nppug64p2NyqTC4drN/nbtgaRpuRv8=
 github.com/wonksing/structmapper v0.0.3/go.mod h1:adymR5XTDyTNUuUWHZNE5ODPwNCMQl2MAm+IggQCCKE=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

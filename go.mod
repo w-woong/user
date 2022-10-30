@@ -3,12 +3,12 @@ module github.com/w-woong/user
 go 1.18
 
 require (
-	github.com/go-wonk/si v0.2.6
+	github.com/go-wonk/si v0.2.7
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.8.0
-	github.com/w-woong/common v0.0.8
+	github.com/w-woong/common v0.0.11
 	github.com/wonksing/structmapper v0.0.3
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.24.0
