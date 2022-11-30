@@ -5,42 +5,53 @@ import (
 
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/logger"
+	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user/entity"
 	"gorm.io/gorm"
 )
 
-type PgPassword struct {
+type passwordPg struct {
 	db *gorm.DB
 }
 
-func NewPgPassword(db *gorm.DB) *PgPassword {
-	return &PgPassword{
+func NewPasswordPg(db *gorm.DB) *passwordPg {
+	return &passwordPg{
 		db: db,
 	}
 }
-func (a *PgPassword) UpdateByUserID(ctx context.Context, tx common.TxController, value string, userID string) (int64, error) {
+
+func (a *passwordPg) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error) {
+	return a.readByUserID(ctx, tx.(*txcom.GormTxController).Tx, userID)
+}
+
+func (a *passwordPg) ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error) {
+	return a.readByUserID(ctx, a.db, userID)
+}
+func (a *passwordPg) UpdateByUserID(ctx context.Context, tx common.TxController, value string, userID string) (int64, error) {
 	// res := a.db.Save(&user)
-	res := tx.(*GormTxController).Tx.WithContext(ctx).
+	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).
 		Model(&entity.Password{}).
 		Where("user_id = ?", userID).
 		Updates(entity.Password{Value: value})
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
-		return 0, ConvertErr(res.Error)
+		return 0, txcom.ConvertErr(res.Error)
 	}
 
 	return res.RowsAffected, nil
 }
 
-func (a *PgPassword) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error) {
-	return a.readByUserID(ctx, tx.(*GormTxController).Tx, userID)
+func (a *passwordPg) DeleteByUserID(ctx context.Context, tx common.TxController, userID string) (int64, error) {
+	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).
+		Where("user_id = ?", userID).
+		Delete(&entity.Password{})
+	if res.Error != nil {
+		return 0, txcom.ConvertErr(res.Error)
+	}
+	return res.RowsAffected, nil
 }
 
-func (a *PgPassword) ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error) {
-	return a.readByUserID(ctx, a.db, userID)
-}
-
-func (a *PgPassword) readByUserID(ctx context.Context, db *gorm.DB, userID string) (entity.Password, error) {
+func (a *passwordPg) readByUserID(ctx context.Context, db *gorm.DB, userID string) (entity.Password, error) {
 	password := entity.Password{}
 	res := db.WithContext(ctx).
 		Where("user_id = ?", userID).
@@ -48,18 +59,8 @@ func (a *PgPassword) readByUserID(ctx context.Context, db *gorm.DB, userID strin
 
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
-		return entity.NilPassword, ConvertErr(res.Error)
+		return entity.NilPassword, txcom.ConvertErr(res.Error)
 	}
 
 	return password, nil
-}
-
-func (a *PgPassword) DeleteByUserID(ctx context.Context, tx common.TxController, userID string) (int64, error) {
-	res := tx.(*GormTxController).Tx.WithContext(ctx).
-		Where("user_id = ?", userID).
-		Delete(&entity.Password{})
-	if res.Error != nil {
-		return 0, ConvertErr(res.Error)
-	}
-	return res.RowsAffected, nil
 }

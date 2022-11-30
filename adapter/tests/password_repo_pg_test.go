@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user/adapter"
 )
 
@@ -15,8 +16,8 @@ func TestUpdateByUserID(t *testing.T) {
 	}
 	var err error
 
-	txBeginner := adapter.NewGormTxBeginner(gdb)
-	userRepo := adapter.NewPgPassword(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
+	userRepo := adapter.NewPasswordPg(gdb)
 
 	tx, err := txBeginner.Begin()
 	assert.Nil(t, err)
@@ -33,8 +34,8 @@ func TestReadByUserID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	txBeginner := adapter.NewGormTxBeginner(gdb)
-	userRepo := adapter.NewPgPassword(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
+	userRepo := adapter.NewPasswordPg(gdb)
 
 	tx, err := txBeginner.Begin()
 	assert.Nil(t, err)
@@ -54,7 +55,7 @@ func TestReadByUserIDNoTx(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 
-	userRepo := adapter.NewPgPassword(gdb)
+	userRepo := adapter.NewPasswordPg(gdb)
 
 	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
 
@@ -68,8 +69,8 @@ func TestDeleteByUserID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	txBeginner := adapter.NewGormTxBeginner(gdb)
-	userRepo := adapter.NewPgPassword(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
+	userRepo := adapter.NewPasswordPg(gdb)
 
 	tx, err := txBeginner.Begin()
 	assert.Nil(t, err)

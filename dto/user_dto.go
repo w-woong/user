@@ -6,17 +6,17 @@ import (
 )
 
 type User struct {
-	ID        string     `json:"id,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	ID        string     `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
-	LoginID   string `json:"login_id,omitempty"`
-	LoginType string `json:"login_type,omitempty"`
+	LoginID     string `json:"login_id"`
+	LoginType   string `json:"login_type"`
+	LoginSource string `json:"login_source"`
 
-	Password Pasword  `json:"password"`
+	Password Password `json:"password"`
 	Personal Personal `json:"personal"`
-	Emails   []Email  `json:"emails,omitempty"`
+	Emails   Emails   `json:"emails"`
 }
 
 func (d *User) String() string {

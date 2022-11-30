@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/entity"
 )
@@ -17,7 +18,7 @@ func TestCreateUser(t *testing.T) {
 	}
 	var err error
 
-	txBeginner := adapter.NewGormTxBeginner(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
 	userRepo := adapter.NewPgUser(gdb)
 
 	tx, err := txBeginner.Begin()
@@ -70,7 +71,7 @@ func TestCreateUser2(t *testing.T) {
 	}
 	var err error
 
-	txBeginner := adapter.NewGormTxBeginner(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
 	userRepo := adapter.NewPgUser(gdb)
 
 	tx, err := txBeginner.Begin()
@@ -101,7 +102,7 @@ func TestCreateUser3(t *testing.T) {
 	}
 	var err error
 
-	txBeginner := adapter.NewGormTxBeginner(gdb)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
 	userRepo := adapter.NewPgUser(gdb)
 
 	tx, err := txBeginner.Begin()

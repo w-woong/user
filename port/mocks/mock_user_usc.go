@@ -35,19 +35,19 @@ func (m *MockUserUsc) EXPECT() *MockUserUscMockRecorder {
 	return m.recorder
 }
 
-// FindUserByID mocks base method.
-func (m *MockUserUsc) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
+// FindUser mocks base method.
+func (m *MockUserUsc) FindUser(ctx context.Context, id string) (dto.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindUserByID", ctx, ID)
+	ret := m.ctrl.Call(m, "FindUser", ctx, id)
 	ret0, _ := ret[0].(dto.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindUserByID indicates an expected call of FindUserByID.
-func (mr *MockUserUscMockRecorder) FindUserByID(ctx, ID interface{}) *gomock.Call {
+// FindUser indicates an expected call of FindUser.
+func (mr *MockUserUscMockRecorder) FindUser(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByID", reflect.TypeOf((*MockUserUsc)(nil).FindUserByID), ctx, ID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUser", reflect.TypeOf((*MockUserUsc)(nil).FindUser), ctx, id)
 }
 
 // LoginWithPassword mocks base method.
@@ -80,17 +80,17 @@ func (mr *MockUserUscMockRecorder) RegisterUser(ctx, input interface{}) *gomock.
 }
 
 // RemoveUser mocks base method.
-func (m *MockUserUsc) RemoveUser(ctx context.Context, ID string) error {
+func (m *MockUserUsc) RemoveUser(ctx context.Context, id string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveUser", ctx, ID)
+	ret := m.ctrl.Call(m, "RemoveUser", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RemoveUser indicates an expected call of RemoveUser.
-func (mr *MockUserUscMockRecorder) RemoveUser(ctx, ID interface{}) *gomock.Call {
+func (mr *MockUserUscMockRecorder) RemoveUser(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveUser", reflect.TypeOf((*MockUserUsc)(nil).RemoveUser), ctx, ID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveUser", reflect.TypeOf((*MockUserUsc)(nil).RemoveUser), ctx, id)
 }
 
 // MockAuthenticator is a mock of Authenticator interface.

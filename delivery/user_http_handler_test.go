@@ -20,7 +20,7 @@ var (
 	userDto = dto.User{
 		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 		LoginID: "wonk",
-		Password: dto.Pasword{
+		Password: dto.Password{
 			ID:     "333cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID: "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			Value:  "asdfasdfasdf",
@@ -44,12 +44,12 @@ func TestHandleFindUserByID(t *testing.T) {
 	urlPath := "/v1/user/{id}"
 	ctrl := gomock.NewController(t)
 	usc := mocks.NewMockUserUsc(ctrl)
-	usc.EXPECT().FindUserByID(gomock.Any(), userDto.ID).
+	usc.EXPECT().FindUser(gomock.Any(), userDto.ID).
 		Return(userDto, nil).AnyTimes()
 
 	router := mux.NewRouter()
 	handler := delivery.NewUserHttpHandler(usc)
-	router.HandleFunc(urlPath, handler.HandleFindByID).Methods(http.MethodGet)
+	router.HandleFunc(urlPath, handler.HandleFindUser).Methods(http.MethodGet)
 
 	// request PosVersionHttpHandler
 	req, err := http.NewRequest(http.MethodGet, "/v1/user/22bcbf79-ca5f-42dc-8ca0-29441209a36a", nil)

@@ -12,7 +12,7 @@ import (
 )
 
 func TestToUserEntity(t *testing.T) {
-	password := dto.Pasword{
+	password := dto.Password{
 		Value: "asdfasdfasdfasdfasdfasdfasdf",
 	}
 	personal := dto.Personal{

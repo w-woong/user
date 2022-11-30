@@ -24,7 +24,7 @@ server:
 
 logger:
   json: true
-  stdout: false
+  stdout: true
   file:
     name: 'logs/agent.log'
     max_size: 50

@@ -18,6 +18,7 @@ import (
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/configs"
 	"github.com/w-woong/common/logger"
+	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
@@ -114,9 +115,9 @@ func main() {
 	var userUsc port.UserUsc
 	switch conf.Server.Repo.Driver {
 	case "pgx":
-		txBeginner := adapter.NewGormTxBeginner(gormDB)
+		txBeginner := txcom.NewGormTxBeginner(gormDB)
 		userRepo := adapter.NewPgUser(gormDB)
-		pwRepo = adapter.NewPgPassword(gormDB)
+		pwRepo = adapter.NewPasswordPg(gormDB)
 		userUsc = usecase.NewUser(txBeginner, userRepo, pwRepo, defaultTimeout)
 	default:
 		logger.Error(conf.Server.Repo.Driver + " is not allowed")
@@ -170,7 +171,7 @@ func SetRoute(router *mux.Router, conf user.ConfigHttp) {
 	).Methods(http.MethodPost)
 
 	router.HandleFunc("/v1/user/{id}",
-		common.AuthBearerHandler(userHandler.HandleFindByID, conf.BearerToken),
+		common.AuthBearerHandler(userHandler.HandleFindUser, conf.BearerToken),
 	).Methods(http.MethodGet)
 
 	// router.HandleFunc("/v1/user/{id}",

@@ -8,21 +8,21 @@ import (
 )
 
 type Personal struct {
-	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
-	CreatedAt *time.Time `gorm:"<-:create"`
-	UpdatedAt *time.Time `gorm:"<-:update"`
-	DeletedAt *time.Time `gorm:"<-:update"`
+	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
+	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
+	UpdatedAt *time.Time `gorm:"<-" json:"updated_at"`
 
-	UserID string `gorm:"type:string;size:64;comment:user id"`
+	UserID string `gorm:"type:string;size:64;comment:user id" json:"user_id"`
 
-	FirstName   string    `gorm:"not null;type:string;size:256;comment:first name"`
-	LastName    string    `gorm:"not null;type:string;size:256;comment:last name"`
-	BirthYear   int       `gorm:"column:birth_year"`
-	BirthMonth  int       `gorm:"column:birth_month"`
-	BirthDay    int       `gorm:"column:birth_day"`
-	BirthDate   time.Time `gorm:"comment:yyyymmdd"`
-	Gender      string    `gorm:"type:string;size:1;comment:M or F or empty/null"`
-	Nationality string    `gorm:"type:string;size:3;comment:Nationality(ISO 3166-1)"`
+	FirstName   string    `gorm:"not null;type:string;size:256;comment:first name" json:"first_name"`
+	MiddleName  string    `gorm:"not null;type:string;size:256;comment:middle name" json:"middle_name"`
+	LastName    string    `gorm:"not null;type:string;size:256;comment:last name" json:"last_name"`
+	BirthYear   int       `gorm:"column:birth_year" json:"birth_year"`
+	BirthMonth  int       `gorm:"column:birth_month" json:"birth_month"`
+	BirthDay    int       `gorm:"column:birth_day" json:"birth_day"`
+	BirthDate   time.Time `gorm:"comment:yyyymmdd" json:"birth_date"`
+	Gender      string    `gorm:"type:string;size:1;comment:M or F or empty/null" json:"gender"`
+	Nationality string    `gorm:"type:string;size:3;comment:Nationality(ISO 3166-1)" json:"nationality"`
 }
 
 func (e *Personal) String() string {

@@ -17,12 +17,12 @@ const (
 var NilPassword = Password{}
 
 type Password struct {
-	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id"`
-	CreatedAt *time.Time `gorm:"<-:create"`
-	UpdatedAt *time.Time `gorm:"<-:update"`
-	DeletedAt *time.Time `gorm:"<-:update"`
-	UserID    string     `gorm:"unique;type:string;size:64;comment:user id"`
-	Value     string     `gorm:"type:string;size:2048;comment:secret value"`
+	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
+	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
+	UpdatedAt *time.Time `gorm:"<-" json:"updated_at"`
+
+	UserID string `gorm:"unique;type:string;size:64;comment:user id" json:"user_id"`
+	Value  string `gorm:"type:string;size:2048;comment:secret value" json:"value"`
 }
 
 func (e *Password) String() string {

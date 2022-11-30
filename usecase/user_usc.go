@@ -68,8 +68,8 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	return conv.ToUserDto(&user)
 }
 
-func (u *User) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
-	user, err := u.userRepo.ReadUserByIDNoTx(ctx, ID)
+func (u *User) FindUser(ctx context.Context, id string) (dto.User, error) {
+	user, err := u.userRepo.ReadUserNoTx(ctx, id)
 	if err != nil {
 		return dto.NilUser, err
 	}
@@ -80,7 +80,7 @@ func (u *User) FindUserByID(ctx context.Context, ID string) (dto.User, error) {
 // takenLoginID checks if loginID is already taken.
 // Returns nil if loginID is available.
 func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {
-	foundUser, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
+	foundUser, err := u.userRepo.ReadByLoginID(ctx, tx, loginID)
 	if err != nil {
 		if !errors.Is(err, common.ErrRecordNotFound) {
 			return err
@@ -100,7 +100,7 @@ func (u *User) RemoveUser(ctx context.Context, ID string) error {
 	}
 	defer tx.Rollback()
 
-	_, err = u.userRepo.DeleteUserByID(ctx, tx, ID)
+	_, err = u.userRepo.DeleteUser(ctx, tx, ID)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) 
 	}
 	defer tx.Rollback()
 
-	user, err := u.userRepo.ReadUserByLoginID(ctx, tx, loginID)
+	user, err := u.userRepo.ReadByLoginID(ctx, tx, loginID)
 	if err != nil {
 		return err
 	}

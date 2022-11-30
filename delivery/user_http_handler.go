@@ -57,11 +57,11 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (d *UserHttpHandler) HandleFindByID(w http.ResponseWriter, r *http.Request) {
+func (d *UserHttpHandler) HandleFindUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["id"]
 
-	user, err := d.userUsc.FindUserByID(r.Context(), ID)
+	user, err := d.userUsc.FindUser(r.Context(), ID)
 	if err != nil {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
