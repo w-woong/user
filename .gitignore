@@ -18,9 +18,11 @@
 
 # debug files
 debug
+__debug_bin
 
 logs/
 *.log
 *.log.gz
 
 bin/
+.vscode/
