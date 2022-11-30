@@ -169,6 +169,9 @@ func SetRoute(router *mux.Router, conf user.ConfigHttp) {
 	router.HandleFunc("/v1/user",
 		common.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
 	).Methods(http.MethodPost)
+	router.HandleFunc("/v1/user/google",
+		common.AuthBearerHandler(userHandler.HandleRegisterGoogleUser, conf.BearerToken),
+	).Methods(http.MethodPost)
 
 	router.HandleFunc("/v1/user/{id}",
 		common.AuthBearerHandler(userHandler.HandleFindUser, conf.BearerToken),

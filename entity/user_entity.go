@@ -92,6 +92,15 @@ func (e User) Validate() error {
 	return nil
 }
 
+func (e *User) GenerateGoogleLoginID() error {
+	if e.LoginID == "" {
+		return errors.New("login id is empty")
+	}
+	e.LoginSource = LoginSourceGoogle
+	e.LoginID = string(e.LoginSource) + "_" + e.LoginID
+	return nil
+}
+
 func (e User) validateLoginID() error {
 	if ok, _ := regexp.MatchString("[a-zA-Z0-9]{6,}", e.LoginID); !ok {
 		return errors.New("login_id is not valid")

@@ -64,6 +64,21 @@ func (mr *MockUserUscMockRecorder) LoginWithPassword(ctx, loginID, password inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginWithPassword", reflect.TypeOf((*MockUserUsc)(nil).LoginWithPassword), ctx, loginID, password)
 }
 
+// RegisterGoogleUser mocks base method.
+func (m *MockUserUsc) RegisterGoogleUser(ctx context.Context, input dto.User) (dto.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterGoogleUser", ctx, input)
+	ret0, _ := ret[0].(dto.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterGoogleUser indicates an expected call of RegisterGoogleUser.
+func (mr *MockUserUscMockRecorder) RegisterGoogleUser(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterGoogleUser", reflect.TypeOf((*MockUserUsc)(nil).RegisterGoogleUser), ctx, input)
+}
+
 // RegisterUser mocks base method.
 func (m *MockUserUsc) RegisterUser(ctx context.Context, input dto.User) (dto.User, error) {
 	m.ctrl.T.Helper()

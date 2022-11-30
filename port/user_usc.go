@@ -11,6 +11,7 @@ import (
 type UserUsc interface {
 	// RegisterUser registers a new user
 	RegisterUser(ctx context.Context, input dto.User) (dto.User, error)
+	RegisterGoogleUser(ctx context.Context, input dto.User) (dto.User, error)
 
 	// FindUser finds user with ID
 	FindUser(ctx context.Context, id string) (dto.User, error)

@@ -40,12 +40,50 @@ func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, er
 	}
 	defer tx.Rollback()
 
-	if err := u.takenLoginID(ctx, tx, userDto.LoginID); err != nil {
+	user, err := conv.ToUserEntity(&userDto)
+	if err != nil {
 		return dto.NilUser, err
 	}
 
+	if err := u.takenLoginID(ctx, tx, user.LoginID); err != nil {
+		return dto.NilUser, err
+	}
+
+	if err = user.PrepareToRegister(); err != nil {
+		return dto.NilUser, err
+	}
+
+	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, user)
+	if err != nil {
+		return dto.NilUser, err
+	}
+	if rowsAffected != 1 {
+		return dto.NilUser, common.ErrCreateUser
+	}
+
+	if err = tx.Commit(); err != nil {
+		return dto.NilUser, err
+	}
+
+	return conv.ToUserDto(&user)
+}
+
+func (u *User) RegisterGoogleUser(ctx context.Context, userDto dto.User) (dto.User, error) {
+	tx, err := u.txBeginner.Begin()
+	if err != nil {
+		return dto.NilUser, err
+	}
+	defer tx.Rollback()
+
 	user, err := conv.ToUserEntity(&userDto)
 	if err != nil {
+		return dto.NilUser, err
+	}
+	if err := user.GenerateGoogleLoginID(); err != nil {
+		return dto.NilUser, err
+	}
+
+	if err := u.takenLoginID(ctx, tx, userDto.LoginID); err != nil {
 		return dto.NilUser, err
 	}
 
