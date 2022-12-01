@@ -8,6 +8,7 @@ import (
 	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user/entity"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PgUser struct {
@@ -59,12 +60,18 @@ func (a *PgUser) ReadByLoginIDNoTx(ctx context.Context, loginID string) (entity.
 
 func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string) (entity.User, error) {
 	user := entity.User{}
-	res := db.WithContext(ctx).Where("login_id = ?", loginID).
-		First(&user)
+	res := db.WithContext(ctx).
+		Preload(clause.Associations).
+		Where("login_id = ?", loginID).
+		Limit(1).Find(&user)
 
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return entity.NilUser, txcom.ConvertErr(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		logger.Error(res.Error.Error())
+		return entity.NilUser, common.ErrRecordNotFound
 	}
 
 	return user, nil

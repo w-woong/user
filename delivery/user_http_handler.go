@@ -77,7 +77,7 @@ func (d *UserHttpHandler) HandleRegisterGoogleUser(w http.ResponseWriter, r *htt
 	registeredUser, err = d.userUsc.RegisterGoogleUser(ctx, user)
 	if err != nil {
 		if errors.Is(err, common.ErrLoginIDAlreadyExists) {
-			_, err = d.userUsc.ModifyGoogleUser(ctx, user)
+			registeredUser, err = d.userUsc.ModifyGoogleUser(ctx, user)
 			if err != nil {
 				common.HttpError(w, http.StatusInternalServerError)
 				logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
