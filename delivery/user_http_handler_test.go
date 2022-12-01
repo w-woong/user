@@ -17,6 +17,7 @@ import (
 )
 
 var (
+	bd      = time.Date(2002, 1, 2, 0, 0, 0, 0, time.Local)
 	userDto = dto.User{
 		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 		LoginID: "wonk",
@@ -33,7 +34,7 @@ var (
 			BirthYear:   2002,
 			BirthMonth:  1,
 			BirthDay:    2,
-			BirthDate:   time.Date(2002, 1, 2, 0, 0, 0, 0, time.Local),
+			BirthDate:   &bd,
 			Gender:      "M",
 			Nationality: "KOR",
 		},

@@ -35,6 +35,36 @@ func (m *MockUserUsc) EXPECT() *MockUserUscMockRecorder {
 	return m.recorder
 }
 
+// FindByGoogleLoginID mocks base method.
+func (m *MockUserUsc) FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByGoogleLoginID", ctx, loginID)
+	ret0, _ := ret[0].(dto.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByGoogleLoginID indicates an expected call of FindByGoogleLoginID.
+func (mr *MockUserUscMockRecorder) FindByGoogleLoginID(ctx, loginID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGoogleLoginID", reflect.TypeOf((*MockUserUsc)(nil).FindByGoogleLoginID), ctx, loginID)
+}
+
+// FindByLoginID mocks base method.
+func (m *MockUserUsc) FindByLoginID(ctx context.Context, loginID string) (dto.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByLoginID", ctx, loginID)
+	ret0, _ := ret[0].(dto.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByLoginID indicates an expected call of FindByLoginID.
+func (mr *MockUserUscMockRecorder) FindByLoginID(ctx, loginID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByLoginID", reflect.TypeOf((*MockUserUsc)(nil).FindByLoginID), ctx, loginID)
+}
+
 // FindUser mocks base method.
 func (m *MockUserUsc) FindUser(ctx context.Context, id string) (dto.User, error) {
 	m.ctrl.T.Helper()
@@ -62,6 +92,21 @@ func (m *MockUserUsc) LoginWithPassword(ctx context.Context, loginID, password s
 func (mr *MockUserUscMockRecorder) LoginWithPassword(ctx, loginID, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginWithPassword", reflect.TypeOf((*MockUserUsc)(nil).LoginWithPassword), ctx, loginID, password)
+}
+
+// ModifyGoogleUser mocks base method.
+func (m *MockUserUsc) ModifyGoogleUser(ctx context.Context, userNew dto.User) (dto.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyGoogleUser", ctx, userNew)
+	ret0, _ := ret[0].(dto.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyGoogleUser indicates an expected call of ModifyGoogleUser.
+func (mr *MockUserUscMockRecorder) ModifyGoogleUser(ctx, userNew interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyGoogleUser", reflect.TypeOf((*MockUserUsc)(nil).ModifyGoogleUser), ctx, userNew)
 }
 
 // RegisterGoogleUser mocks base method.

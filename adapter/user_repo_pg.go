@@ -6,7 +6,6 @@ import (
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"gorm.io/gorm"
 )
@@ -85,7 +84,7 @@ func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string)
 // }
 
 func (a *PgUser) DeleteUser(ctx context.Context, tx common.TxController, id string) (int64, error) {
-	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).Delete(&dto.User{ID: id})
+	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).Delete(&entity.User{ID: id})
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return 0, txcom.ConvertErr(res.Error)

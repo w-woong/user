@@ -79,11 +79,12 @@ func (u *User) RegisterGoogleUser(ctx context.Context, userDto dto.User) (dto.Us
 	if err != nil {
 		return dto.NilUser, err
 	}
+
 	if err := user.GenerateGoogleLoginID(); err != nil {
 		return dto.NilUser, err
 	}
 
-	if err := u.takenLoginID(ctx, tx, userDto.LoginID); err != nil {
+	if err := u.takenLoginID(ctx, tx, user.LoginID); err != nil {
 		return dto.NilUser, err
 	}
 
@@ -115,6 +116,23 @@ func (u *User) FindUser(ctx context.Context, id string) (dto.User, error) {
 	return conv.ToUserDto(&user)
 }
 
+func (u *User) FindByLoginID(ctx context.Context, loginID string) (dto.User, error) {
+	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, loginID)
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	return conv.ToUserDto(&user)
+}
+func (u *User) FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error) {
+	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, entity.CreateGoogleLoginID(loginID))
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	return conv.ToUserDto(&user)
+}
+
 // takenLoginID checks if loginID is already taken.
 // Returns nil if loginID is available.
 func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {
@@ -129,6 +147,35 @@ func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID
 	}
 
 	return nil
+}
+
+func (u *User) ModifyGoogleUser(ctx context.Context, userNew dto.User) (dto.User, error) {
+	tx, err := u.txBeginner.Begin()
+	if err != nil {
+		return dto.NilUser, err
+	}
+	defer tx.Rollback()
+
+	oldUser, err := u.userRepo.ReadByLoginID(ctx, tx, entity.CreateGoogleLoginID(userNew.LoginID))
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	oldUser.Password.Value = userNew.Password.Value
+	oldUser.Personal.FirstName = userNew.Personal.FirstName
+	oldUser.Personal.LastName = userNew.Personal.LastName
+
+	_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.Password.Value, oldUser.ID)
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	oldUserDto, err := conv.ToUserDto(&oldUser)
+	if err != nil {
+		return dto.NilUser, err
+	}
+
+	return oldUserDto, tx.Commit()
 }
 
 func (u *User) RemoveUser(ctx context.Context, ID string) error {
@@ -160,9 +207,9 @@ func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) 
 
 	var auth port.Authenticator
 	switch user.LoginType {
-	case entity.IDLoginType:
+	case entity.LoginTypeID:
 		fallthrough
-	case entity.EmailLoginType:
+	case entity.LoginTypeEmail:
 		auth = &PasswordAuthenticator{
 			UserID:       user.ID,
 			Password:     password,
