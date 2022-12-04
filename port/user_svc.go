@@ -7,5 +7,5 @@ import (
 )
 
 type UserSvc interface {
-	RegisterGoogleUser(ctx context.Context, user dto.User) (dto.User, error)
+	RegisterUser(ctx context.Context, user dto.User) (dto.User, error)
 }
