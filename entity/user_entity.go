@@ -14,8 +14,9 @@ var NilUser = User{}
 type LoginType string
 
 const (
-	IDLoginType    LoginType = "id"
-	EmailLoginType LoginType = "email"
+	LoginTypeID    LoginType = "id"
+	LoginTypeEmail LoginType = "email"
+	LoginTypeToken LoginType = "token"
 )
 
 type LoginSource string
@@ -92,12 +93,16 @@ func (e User) Validate() error {
 	return nil
 }
 
+func CreateGoogleLoginID(id string) string {
+	return string(LoginSourceGoogle) + "_" + id
+}
 func (e *User) GenerateGoogleLoginID() error {
 	if e.LoginID == "" {
 		return errors.New("login id is empty")
 	}
+	e.LoginID = CreateGoogleLoginID(e.LoginID)
 	e.LoginSource = LoginSourceGoogle
-	e.LoginID = string(e.LoginSource) + "_" + e.LoginID
+	e.LoginType = LoginTypeToken
 	return nil
 }
 

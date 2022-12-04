@@ -14,12 +14,13 @@ import (
 
 type userHttp struct {
 	client      *sihttp.Client
+	loginSource string
 	baseUrl     string
 	host        string
 	bearerToken string
 }
 
-func NewUserHttp(client *http.Client, baseUrl string, bearerToken string) *userHttp {
+func NewUserHttp(client *http.Client, loginSource string, baseUrl string, bearerToken string) *userHttp {
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/json; charset=utf-8"
 
@@ -31,6 +32,7 @@ func NewUserHttp(client *http.Client, baseUrl string, bearerToken string) *userH
 
 	a := &userHttp{
 		client:      c,
+		loginSource: loginSource,
 		baseUrl:     baseUrl,
 		bearerToken: bearerToken,
 	}
@@ -40,7 +42,7 @@ func NewUserHttp(client *http.Client, baseUrl string, bearerToken string) *userH
 	return a
 }
 
-func (a *userHttp) RegisterGoogleUser(ctx context.Context, user dto.User) (dto.User, error) {
+func (a *userHttp) RegisterUser(ctx context.Context, user dto.User) (dto.User, error) {
 
 	req := common.HttpBody{
 		Count:    1,
@@ -51,7 +53,7 @@ func (a *userHttp) RegisterGoogleUser(ctx context.Context, user dto.User) (dto.U
 	res := common.HttpBody{
 		Document: &resUser,
 	}
-	err := a.client.RequestPostDecodeContext(ctx, "/v1/user/google", nil, &req, &res)
+	err := a.client.RequestPostDecodeContext(ctx, "/v1/user/"+a.loginSource, nil, &req, &res)
 	if err != nil {
 		return dto.NilUser, err
 	}

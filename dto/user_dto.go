@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var NilUser = User{}
+
 type User struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
@@ -24,7 +26,9 @@ func (d *User) String() string {
 	return string(b)
 }
 
-var NilUser = User{}
+func (d User) IsNil() bool {
+	return d.ID == "" && d.LoginID == ""
+}
 
 type Users []User
 

@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"bytes"
+	"errors"
 	"net/http"
 
 	"github.com/go-wonk/si"
@@ -58,6 +59,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 }
 
 func (d *UserHttpHandler) HandleRegisterGoogleUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	var user dto.User
 	reqBody := common.HttpBody{
 		Document: &user,
@@ -72,10 +74,20 @@ func (d *UserHttpHandler) HandleRegisterGoogleUser(w http.ResponseWriter, r *htt
 	}
 
 	var registeredUser dto.User
-	if registeredUser, err = d.userUsc.RegisterGoogleUser(r.Context(), user); err != nil {
-		common.HttpError(w, http.StatusInternalServerError)
-		logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
-		return
+	registeredUser, err = d.userUsc.RegisterGoogleUser(ctx, user)
+	if err != nil {
+		if errors.Is(err, common.ErrLoginIDAlreadyExists) {
+			registeredUser, err = d.userUsc.ModifyGoogleUser(ctx, user)
+			if err != nil {
+				common.HttpError(w, http.StatusInternalServerError)
+				logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
+				return
+			}
+		} else {
+			common.HttpError(w, http.StatusInternalServerError)
+			logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
+			return
+		}
 	}
 
 	resBody := common.HttpBody{

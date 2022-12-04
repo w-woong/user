@@ -57,7 +57,7 @@ func TestCreateUser(t *testing.T) {
 		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
-			BirthDate: birthDate,
+			BirthDate: &birthDate,
 		},
 		Emails: emails,
 	})
@@ -89,7 +89,7 @@ func TestCreateUser2(t *testing.T) {
 		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
-			BirthDate: birthDate,
+			BirthDate: &birthDate,
 		},
 	})
 	assert.Nil(t, err)
@@ -128,7 +128,7 @@ func TestCreateUser3(t *testing.T) {
 		Personal: entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
-			BirthDate: birthDate,
+			BirthDate: &birthDate,
 		},
 	})
 	assert.Nil(t, err)

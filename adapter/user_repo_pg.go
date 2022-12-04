@@ -6,9 +6,9 @@ import (
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PgUser struct {
@@ -60,12 +60,18 @@ func (a *PgUser) ReadByLoginIDNoTx(ctx context.Context, loginID string) (entity.
 
 func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string) (entity.User, error) {
 	user := entity.User{}
-	res := db.WithContext(ctx).Where("login_id = ?", loginID).
-		First(&user)
+	res := db.WithContext(ctx).
+		Preload(clause.Associations).
+		Where("login_id = ?", loginID).
+		Limit(1).Find(&user)
 
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return entity.NilUser, txcom.ConvertErr(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		logger.Error(res.Error.Error())
+		return entity.NilUser, common.ErrRecordNotFound
 	}
 
 	return user, nil
@@ -85,7 +91,7 @@ func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string)
 // }
 
 func (a *PgUser) DeleteUser(ctx context.Context, tx common.TxController, id string) (int64, error) {
-	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).Delete(&dto.User{ID: id})
+	res := tx.(*txcom.GormTxController).Tx.WithContext(ctx).Delete(&entity.User{ID: id})
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return 0, txcom.ConvertErr(res.Error)

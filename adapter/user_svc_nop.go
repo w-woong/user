@@ -12,6 +12,6 @@ type UserSvcNop struct {
 func NewUserSvcNop() *UserSvcNop {
 	return &UserSvcNop{}
 }
-func (UserSvcNop) RegisterGoogleUser(ctx context.Context, user dto.User) (dto.User, error) {
+func (UserSvcNop) RegisterUser(ctx context.Context, user dto.User) (dto.User, error) {
 	return dto.NilUser, nil
 }
