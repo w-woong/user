@@ -49,7 +49,7 @@ func TestHandleFindUserByID(t *testing.T) {
 		Return(userDto, nil).AnyTimes()
 
 	router := mux.NewRouter()
-	handler := delivery.NewUserHttpHandler(usc)
+	handler := delivery.NewUserHttpHandler(15*time.Second, usc)
 	router.HandleFunc(urlPath, handler.HandleFindUser).Methods(http.MethodGet)
 
 	// request PosVersionHttpHandler

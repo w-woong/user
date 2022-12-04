@@ -18,8 +18,9 @@ import (
 	"github.com/w-woong/common"
 	"github.com/w-woong/common/configs"
 	"github.com/w-woong/common/logger"
+	"github.com/w-woong/common/middlewares"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/user"
+	"github.com/w-woong/common/validators"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
 	"github.com/w-woong/user/entity"
@@ -48,8 +49,8 @@ func init() {
 	flag.StringVar(&addr, "addr", ":8080", "listen address")
 	flag.BoolVar(&printVersion, "version", false, "print version")
 	flag.IntVar(&tickIntervalSec, "tick", 30, "tick interval in second")
-	flag.StringVar(&certKey, "key", "", "server key")
-	flag.StringVar(&certPem, "pem", "", "server pem")
+	flag.StringVar(&certKey, "key", "./certs/key.pem", "server key")
+	flag.StringVar(&certPem, "pem", "./certs/cert.pem", "server pem")
 	flag.IntVar(&readTimeout, "readTimeout", 30, "read timeout")
 	flag.IntVar(&writeTimeout, "writeTimeout", 30, "write timeout")
 	flag.StringVar(&configName, "config", "./configs/server.yml", "config file name")
@@ -73,7 +74,7 @@ func main() {
 	runtime.GOMAXPROCS(maxProc)
 
 	// config
-	conf := user.Config{}
+	conf := common.Config{}
 	if err := configs.ReadConfigInto(configName, &conf); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -111,23 +112,38 @@ func main() {
 
 	gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{})
 
+	var txBeginner common.TxBeginner
 	var pwRepo port.PasswordRepo
-	var userUsc port.UserUsc
+	var userRepo port.UserRepo
 	switch conf.Server.Repo.Driver {
 	case "pgx":
-		txBeginner := txcom.NewGormTxBeginner(gormDB)
-		userRepo := adapter.NewPgUser(gormDB)
+		txBeginner = txcom.NewGormTxBeginner(gormDB)
+		userRepo = adapter.NewPgUser(gormDB)
 		pwRepo = adapter.NewPasswordPg(gormDB)
-		userUsc = usecase.NewUser(txBeginner, userRepo, pwRepo, defaultTimeout)
+
 	default:
 		logger.Error(conf.Server.Repo.Driver + " is not allowed")
 		os.Exit(1)
 	}
+	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
+
+	idTokenValidators := make(validators.IDTokenValidators)
+	for _, v := range conf.Client.Oauth2.IDTokenValidators {
+		if v.Type == "jwks" {
+			jwksUrl, err := validators.GetJwksUrl(v.OpenIDConfUrl)
+			if err != nil {
+				logger.Error(err.Error())
+				os.Exit(1)
+			}
+			validator := validators.NewJwksIDTokenValidator(jwksUrl)
+			idTokenValidators[v.Token.Source] = validator
+		}
+	}
 
 	// http handler
-	userHandler = delivery.NewUserHttpHandler(userUsc)
+	userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)
 	router := mux.NewRouter()
-	SetRoute(router, conf.Server.Http)
+	SetRoute(router, conf.Server.Http, idTokenValidators)
 
 	// http server
 	tlsConfig := sihttp.CreateTLSConfigMinTls(tls.VersionTLS12)
@@ -165,24 +181,35 @@ var (
 	userHandler *delivery.UserHttpHandler
 )
 
-func SetRoute(router *mux.Router, conf user.ConfigHttp) {
+func SetRoute(router *mux.Router, conf common.ConfigHttp, validator validators.IDTokenValidators) {
+	router.HandleFunc("/v1/user/{login_source}",
+		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
+	).Methods(http.MethodPost)
 	router.HandleFunc("/v1/user",
-		common.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
+		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
 	).Methods(http.MethodPost)
-	router.HandleFunc("/v1/user/google",
-		common.AuthBearerHandler(userHandler.HandleRegisterGoogleUser, conf.BearerToken),
-	).Methods(http.MethodPost)
+	// router.HandleFunc("/v1/user/google",
+	// 	middlewares.AuthBearerHandler(userHandler.HandleRegisterGoogleUser, conf.BearerToken),
+	// ).Methods(http.MethodPost)
+
+	// router.HandleFunc("/v1/user/{id}",
+	// 	middlewares.AuthBearerHandler(userHandler.HandleFindUser, conf.BearerToken),
+	// ).Methods(http.MethodGet)
+
+	router.HandleFunc("/v1/user/account",
+		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "id_token", "id_token", "token_source", "token_source"),
+	).Methods(http.MethodGet)
 
 	router.HandleFunc("/v1/user/{id}",
-		common.AuthBearerHandler(userHandler.HandleFindUser, conf.BearerToken),
+		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "id_token", "id_token", "token_source", "token_source"),
 	).Methods(http.MethodGet)
 
 	// router.HandleFunc("/v1/user/{id}",
-	// 	common.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
+	// 	middlewares.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
 	// ).Methods(http.MethodPut)
 
 	router.HandleFunc("/v1/user/{id}",
-		common.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
+		middlewares.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
 	).Methods(http.MethodDelete)
 
 }

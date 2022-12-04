@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,6 +26,20 @@ var (
 	LoginSourceWoong  LoginSource = "woong"
 	LoginSourceGoogle LoginSource = "google"
 )
+
+func (e LoginSource) LoginID(id string) (string, error) {
+	switch e {
+	case LoginSourceWoong:
+		return id, nil
+	case LoginSourceGoogle:
+		if strings.HasPrefix(id, string(e)+"_") {
+			return id, nil
+		}
+		return string(e) + "_" + id, nil
+	default:
+		return "", errors.New("invalid login source")
+	}
+}
 
 // User entity.
 type User struct {

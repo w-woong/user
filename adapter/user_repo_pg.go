@@ -70,7 +70,7 @@ func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string)
 		return entity.NilUser, txcom.ConvertErr(res.Error)
 	}
 	if res.RowsAffected == 0 {
-		logger.Error(res.Error.Error())
+		logger.Error(common.ErrRecordNotFound.Error())
 		return entity.NilUser, common.ErrRecordNotFound
 	}
 
