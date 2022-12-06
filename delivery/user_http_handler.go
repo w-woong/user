@@ -9,8 +9,8 @@ import (
 	"github.com/go-wonk/si"
 	"github.com/gorilla/mux"
 	"github.com/w-woong/common"
+	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/common/logger"
-	"github.com/w-woong/common/validators"
 	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/port"
 )
@@ -148,14 +148,14 @@ func (d *UserHttpHandler) HandleFindUser(w http.ResponseWriter, r *http.Request)
 
 func (d *UserHttpHandler) HandleFindByLoginID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	claims, ok := ctx.Value(validators.IDTokenClaimsKey{}).(validators.IDTokenClaims)
+	claims, ok := ctx.Value(commondto.IDTokenClaimsKey{}).(commondto.IDTokenClaims)
 	if !ok {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error("could not find claims", logger.UrlField(r.URL.String()))
 		return
 	}
 
-	tokenSource, ok := ctx.Value(validators.TokenSourceKey{}).(string)
+	tokenSource, ok := ctx.Value(commondto.TokenSourceKey{}).(string)
 	if !ok {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error("could not find claims", logger.UrlField(r.URL.String()))

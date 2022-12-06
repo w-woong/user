@@ -16,11 +16,12 @@ import (
 	"github.com/go-wonk/si/sihttp"
 	"github.com/gorilla/mux"
 	"github.com/w-woong/common"
+	commonadapter "github.com/w-woong/common/adapter"
 	"github.com/w-woong/common/configs"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/common/middlewares"
+	commonport "github.com/w-woong/common/port"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/common/validators"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
 	"github.com/w-woong/user/entity"
@@ -127,15 +128,15 @@ func main() {
 	}
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
-	idTokenValidators := make(validators.IDTokenValidators)
+	idTokenValidators := make(commonport.IDTokenValidators)
 	for _, v := range conf.Client.Oauth2.IDTokenValidators {
 		if v.Type == "jwks" {
-			jwksUrl, err := validators.GetJwksUrl(v.OpenIDConfUrl)
+			jwksUrl, err := commonadapter.GetJwksUrl(v.OpenIDConfUrl)
 			if err != nil {
 				logger.Error(err.Error())
 				os.Exit(1)
 			}
-			validator := validators.NewJwksIDTokenValidator(jwksUrl)
+			validator := commonadapter.NewJwksIDTokenValidator(jwksUrl)
 			idTokenValidators[v.Token.Source] = validator
 		}
 	}
@@ -181,7 +182,7 @@ var (
 	userHandler *delivery.UserHttpHandler
 )
 
-func SetRoute(router *mux.Router, conf common.ConfigHttp, validator validators.IDTokenValidators) {
+func SetRoute(router *mux.Router, conf common.ConfigHttp, validator commonport.IDTokenValidators) {
 	router.HandleFunc("/v1/user/{login_source}",
 		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
 	).Methods(http.MethodPost)
