@@ -11,7 +11,6 @@ import (
 	"github.com/w-woong/common"
 	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/common/logger"
-	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/port"
 )
 
@@ -33,7 +32,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 	vars := mux.Vars(r)
 	loginSource := vars["login_source"]
 
-	var user dto.User
+	var user commondto.User
 	reqBody := common.HttpBody{
 		Document: &user,
 	}
@@ -46,7 +45,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var registeredUser dto.User
+	var registeredUser commondto.User
 	if registeredUser, err = d.userUsc.RegisterUser(ctx, user); err != nil {
 		// TODO: handle "google"
 		if errors.Is(err, common.ErrLoginIDAlreadyExists) && loginSource == "google" {

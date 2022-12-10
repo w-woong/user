@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/user/conv"
-	"github.com/w-woong/user/dto"
 )
 
 func TestToUserEntity(t *testing.T) {
-	password := dto.Password{
+	password := commondto.Password{
 		Value: "asdfasdfasdfasdfasdfasdfasdf",
 	}
-	personal := dto.Personal{
+	personal := commondto.Personal{
 		FirstName:   "wonk",
 		LastName:    "sun",
 		BirthYear:   2022,
@@ -24,16 +24,16 @@ func TestToUserEntity(t *testing.T) {
 		Gender:      "M",
 		Nationality: "KOR",
 	}
-	emails := make([]dto.Email, 0)
-	emails = append(emails, dto.Email{
+	emails := make([]commondto.Email, 0)
+	emails = append(emails, commondto.Email{
 		Email:    "wonk@wonk.orgg",
 		Priority: 0,
 	})
-	emails = append(emails, dto.Email{
+	emails = append(emails, commondto.Email{
 		Email:    "monk@wonk.orgg",
 		Priority: 1,
 	})
-	src := dto.User{
+	src := commondto.User{
 		LoginID:   "wonk",
 		LoginType: "id",
 		Password:  password,

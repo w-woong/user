@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	dto "github.com/w-woong/user/dto"
+	dto "github.com/w-woong/common/dto"
 )
 
 // MockUserUsc is a mock of UserUsc interface.
