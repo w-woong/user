@@ -1,0 +1,52 @@
+
+logger:
+  json: true
+  stdout: true
+  file:
+    name: 'logs/agent.log'
+    max_size: 50
+    max_backup: 100
+    max_age: 31
+    compressed: true
+  level: 'debug'
+
+server:
+  repo:
+    driver: 'pgx'
+    conn_str: 'host=testpghost user=test password=test123 dbname=woong_user port=5432 sslmode=disable TimeZone=Asia/Seoul'
+    # used when driver is oci8, postgres, mssql...
+    max_idle_conns: 25
+    max_open_conns: 25
+    conn_max_lifetime_in_min: 15
+
+  grpc:
+    timeout: 15
+    healthcheck: false
+    enforcement_policy:
+      use: true
+      min_time: 15
+      permit_without_stream: true
+    keep_alive:
+      max_conn_idle: 300
+      max_conn_age: 300
+      max_conn_age_grace: 6
+      time: 30
+      timeout: 1
+
+client:
+  oauth2:
+    id_token_validators:
+      - type: 'jwks'
+        token:
+          source: 'google'
+          id_key_name: 'tid'
+          id_token_key_name: 'id_token'
+          token_source_key_name: 'token_source'
+        openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
+      - type: 'jwks'
+        token:
+          source: 'woong'
+          id_key_name: 'tid'
+          id_token_key_name: 'id_token'
+          token_source_key_name: 'token_source'
+        openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
