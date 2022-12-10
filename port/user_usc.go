@@ -5,23 +5,22 @@ package port
 import (
 	"context"
 
-	"github.com/w-woong/user/dto"
+	commondto "github.com/w-woong/common/dto"
 )
 
 type UserUsc interface {
 	// RegisterUser registers a new user
-	RegisterUser(ctx context.Context, input dto.User) (dto.User, error)
-	RegisterGoogleUser(ctx context.Context, input dto.User) (dto.User, error)
+	RegisterUser(ctx context.Context, input commondto.User) (commondto.User, error)
 
 	// FindUser finds user with ID
-	FindUser(ctx context.Context, id string) (dto.User, error)
-	FindByLoginID(ctx context.Context, loginID string) (dto.User, error)
-	FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error)
+	FindUser(ctx context.Context, id string) (commondto.User, error)
+	FindByLoginID(ctx context.Context, loginSource string, loginID string) (commondto.User, error)
+	// FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error)
 
 	// ModifyUserPassword(ctx context.Context)
 
 	// ModifyUser modifies user information with input
-	ModifyGoogleUser(ctx context.Context, userNew dto.User) (dto.User, error)
+	ModifyUser(ctx context.Context, userNew commondto.User) (commondto.User, error)
 
 	// RemoveUser removes user with ID
 	RemoveUser(ctx context.Context, id string) error

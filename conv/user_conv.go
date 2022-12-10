@@ -1,18 +1,18 @@
 package conv
 
 import (
-	"github.com/w-woong/user/dto"
+	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/user/entity"
 	"github.com/wonksing/structmapper"
 )
 
 func init() {
-	structmapper.StoreMapper(&dto.User{}, &entity.User{})
-	structmapper.StoreMapper(&entity.User{}, &dto.User{})
+	structmapper.StoreMapper(&commondto.User{}, &entity.User{})
+	structmapper.StoreMapper(&entity.User{}, &commondto.User{})
 }
 
 // ToUserEntity converts dto.User to entity.User
-func ToUserEntity(src *dto.User) (user entity.User, err error) {
+func ToUserEntity(src *commondto.User) (user entity.User, err error) {
 	// src.BirthDate = time.Date(src.BirthYear, time.Month(src.BirthMonth), src.BirthDay, 0, 0, 0, 0, time.UTC)
 
 	err = structmapper.Map(src, &user)
@@ -21,7 +21,7 @@ func ToUserEntity(src *dto.User) (user entity.User, err error) {
 }
 
 // ToUserDto converts entity.User to dto.User.
-func ToUserDto(src *entity.User) (user dto.User, err error) {
+func ToUserDto(src *entity.User) (user commondto.User, err error) {
 	err = structmapper.Map(src, &user)
 	return
 }

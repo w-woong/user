@@ -11,22 +11,22 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
+	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/user/delivery"
-	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/port/mocks"
 )
 
 var (
 	bd      = time.Date(2002, 1, 2, 0, 0, 0, 0, time.Local)
-	userDto = dto.User{
+	userDto = commondto.User{
 		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 		LoginID: "wonk",
-		Password: dto.Password{
+		Password: commondto.Password{
 			ID:     "333cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID: "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			Value:  "asdfasdfasdf",
 		},
-		Personal: dto.Personal{
+		Personal: commondto.Personal{
 			ID:          "433cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			FirstName:   "wonk",
@@ -49,7 +49,7 @@ func TestHandleFindUserByID(t *testing.T) {
 		Return(userDto, nil).AnyTimes()
 
 	router := mux.NewRouter()
-	handler := delivery.NewUserHttpHandler(usc)
+	handler := delivery.NewUserHttpHandler(15*time.Second, usc)
 	router.HandleFunc(urlPath, handler.HandleFindUser).Methods(http.MethodGet)
 
 	// request PosVersionHttpHandler

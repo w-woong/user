@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"github.com/w-woong/user/dto"
+	commondto "github.com/w-woong/common/dto"
 )
 
 // NopUser is a no-op user adapter that impelments port.UserRepo interface.
@@ -13,8 +13,8 @@ func NewNopUser() *NopUser {
 }
 
 // ReadUserByID returns fixed dto.User
-func (a *NopUser) ReadUserByID(ID string) (dto.User, error) {
-	return dto.User{
+func (a *NopUser) ReadUserByID(ID string) (commondto.User, error) {
+	return commondto.User{
 		ID:      ID,
 		LoginID: "wonk@wonk.orgg",
 	}, nil

@@ -4,134 +4,105 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/w-woong/common"
+	commondto "github.com/w-woong/common/dto"
 	"github.com/w-woong/user/conv"
-	"github.com/w-woong/user/dto"
 	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
 )
 
 type User struct {
-	txBeginner     common.TxBeginner
-	userRepo       port.UserRepo
-	pwRepo         port.PasswordRepo
-	defaultTimeout time.Duration
+	txBeginner common.TxBeginner
+	userRepo   port.UserRepo
+	pwRepo     port.PasswordRepo
 }
 
 func NewUser(txBeginner common.TxBeginner,
-	userRepo port.UserRepo, pwRepo port.PasswordRepo, defaultTimeout time.Duration) *User {
+	userRepo port.UserRepo, pwRepo port.PasswordRepo) *User {
 	return &User{
-		txBeginner:     txBeginner,
-		userRepo:       userRepo,
-		pwRepo:         pwRepo,
-		defaultTimeout: defaultTimeout,
+		txBeginner: txBeginner,
+		userRepo:   userRepo,
+		pwRepo:     pwRepo,
 	}
 }
 
-func (u *User) RegisterUser(ctx context.Context, userDto dto.User) (dto.User, error) {
-	ctx, cancel := context.WithTimeout(ctx, u.defaultTimeout)
-	defer cancel()
+func (u *User) RegisterUser(ctx context.Context, userDto commondto.User) (commondto.User, error) {
+	// ctx, cancel := context.WithTimeout(ctx, u.defaultTimeout)
+	// defer cancel()
 
 	tx, err := u.txBeginner.Begin()
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 	defer tx.Rollback()
 
 	user, err := conv.ToUserEntity(&userDto)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
+	}
+
+	user.LoginID, err = user.LoginSource.LoginID(user.LoginID)
+	if err != nil {
+		return commondto.NilUser, err
 	}
 
 	if err := u.takenLoginID(ctx, tx, user.LoginID); err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	if err = user.PrepareToRegister(); err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, user)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 	if rowsAffected != 1 {
-		return dto.NilUser, common.ErrCreateUser
+		return commondto.NilUser, common.ErrCreateUser
 	}
 
 	if err = tx.Commit(); err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	return conv.ToUserDto(&user)
 }
 
-func (u *User) RegisterGoogleUser(ctx context.Context, userDto dto.User) (dto.User, error) {
-	tx, err := u.txBeginner.Begin()
-	if err != nil {
-		return dto.NilUser, err
-	}
-	defer tx.Rollback()
-
-	user, err := conv.ToUserEntity(&userDto)
-	if err != nil {
-		return dto.NilUser, err
-	}
-
-	if err := user.GenerateGoogleLoginID(); err != nil {
-		return dto.NilUser, err
-	}
-
-	if err := u.takenLoginID(ctx, tx, user.LoginID); err != nil {
-		return dto.NilUser, err
-	}
-
-	if err = user.PrepareToRegister(); err != nil {
-		return dto.NilUser, err
-	}
-
-	rowsAffected, err := u.userRepo.CreateUser(ctx, tx, user)
-	if err != nil {
-		return dto.NilUser, err
-	}
-	if rowsAffected != 1 {
-		return dto.NilUser, common.ErrCreateUser
-	}
-
-	if err = tx.Commit(); err != nil {
-		return dto.NilUser, err
-	}
-
-	return conv.ToUserDto(&user)
-}
-
-func (u *User) FindUser(ctx context.Context, id string) (dto.User, error) {
+func (u *User) FindUser(ctx context.Context, id string) (commondto.User, error) {
 	user, err := u.userRepo.ReadUserNoTx(ctx, id)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	return conv.ToUserDto(&user)
 }
 
-func (u *User) FindByLoginID(ctx context.Context, loginID string) (dto.User, error) {
-	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, loginID)
+func (u *User) FindByLoginID(ctx context.Context, loginSource string, loginID string) (commondto.User, error) {
+
+	loginSourceEntity := entity.LoginSource(loginSource)
+	loginIDWithSource, err := loginSourceEntity.LoginID(loginID)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
-	return conv.ToUserDto(&user)
-}
-func (u *User) FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error) {
-	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, entity.CreateGoogleLoginID(loginID))
+	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, loginIDWithSource)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	return conv.ToUserDto(&user)
 }
+
+// func (u *User) FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error) {
+// 	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, entity.CreateGoogleLoginID(loginID))
+// 	if err != nil {
+// 		return dto.NilUser, err
+// 	}
+
+// 	return conv.ToUserDto(&user)
+// }
 
 // takenLoginID checks if loginID is already taken.
 // Returns nil if loginID is available.
@@ -149,16 +120,21 @@ func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID
 	return nil
 }
 
-func (u *User) ModifyGoogleUser(ctx context.Context, userNew dto.User) (dto.User, error) {
+func (u *User) ModifyUser(ctx context.Context, userNew commondto.User) (commondto.User, error) {
 	tx, err := u.txBeginner.Begin()
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 	defer tx.Rollback()
 
-	oldUser, err := u.userRepo.ReadByLoginID(ctx, tx, entity.CreateGoogleLoginID(userNew.LoginID))
+	loginID, err := entity.LoginSource(userNew.LoginSource).LoginID(userNew.LoginID)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
+	}
+
+	oldUser, err := u.userRepo.ReadByLoginID(ctx, tx, loginID)
+	if err != nil {
+		return commondto.NilUser, err
 	}
 
 	oldUser.Password.Value = userNew.Password.Value
@@ -167,12 +143,12 @@ func (u *User) ModifyGoogleUser(ctx context.Context, userNew dto.User) (dto.User
 
 	_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.Password.Value, oldUser.ID)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	oldUserDto, err := conv.ToUserDto(&oldUser)
 	if err != nil {
-		return dto.NilUser, err
+		return commondto.NilUser, err
 	}
 
 	return oldUserDto, tx.Commit()
