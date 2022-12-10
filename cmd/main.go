@@ -198,11 +198,11 @@ func SetRoute(router *mux.Router, conf common.ConfigHttp, validator commonport.I
 	// ).Methods(http.MethodGet)
 
 	router.HandleFunc("/v1/user/account",
-		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "id_token", "id_token", "token_source", "token_source"),
+		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "tid", "id_token", "token_source"),
 	).Methods(http.MethodGet)
 
 	router.HandleFunc("/v1/user/{id}",
-		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "id_token", "id_token", "token_source", "token_source"),
+		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "tid", "id_token", "token_source"),
 	).Methods(http.MethodGet)
 
 	// router.HandleFunc("/v1/user/{id}",
