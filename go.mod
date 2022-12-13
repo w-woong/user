@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/stretchr/testify v1.8.0
-	github.com/w-woong/common v0.0.42
+	github.com/w-woong/common v0.0.43
 	github.com/wonksing/structmapper v0.0.4
 	google.golang.org/grpc v1.50.1
 	gorm.io/driver/postgres v1.4.4
