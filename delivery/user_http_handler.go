@@ -29,9 +29,6 @@ func NewUserHttpHandler(timeout time.Duration, findUserUsc port.UserUsc) *UserHt
 func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	vars := mux.Vars(r)
-	loginSource := vars["login_source"]
-
 	var user commondto.User
 	reqBody := common.HttpBody{
 		Document: &user,
@@ -48,7 +45,7 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 	var registeredUser commondto.User
 	if registeredUser, err = d.userUsc.RegisterUser(ctx, user); err != nil {
 		// TODO: handle "google"
-		if errors.Is(err, common.ErrLoginIDAlreadyExists) && loginSource == "google" {
+		if errors.Is(err, common.ErrLoginIDAlreadyExists) && user.LoginSource == "google" {
 			registeredUser, err = d.userUsc.ModifyUser(ctx, user)
 			if err != nil {
 				common.HttpError(w, http.StatusInternalServerError)

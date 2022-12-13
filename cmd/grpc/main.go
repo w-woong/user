@@ -134,7 +134,7 @@ func main() {
 				logger.Error(err.Error())
 				os.Exit(1)
 			}
-			validator := commonadapter.NewJwksIDTokenValidator(jwksUrl)
+			validator := commonadapter.NewJwksIDTokenValidator(jwksUrl, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
 			idTokenValidators[v.Token.Source] = validator
 		}
 	}

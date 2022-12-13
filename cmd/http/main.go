@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"runtime"
 	"strings"
@@ -19,11 +18,10 @@ import (
 	commonadapter "github.com/w-woong/common/adapter"
 	"github.com/w-woong/common/configs"
 	"github.com/w-woong/common/logger"
-	"github.com/w-woong/common/middlewares"
 	commonport "github.com/w-woong/common/port"
 	"github.com/w-woong/common/txcom"
 	"github.com/w-woong/user/adapter"
-	"github.com/w-woong/user/delivery"
+	"github.com/w-woong/user/cmd/route"
 	"github.com/w-woong/user/entity"
 	"github.com/w-woong/user/port"
 	"github.com/w-woong/user/usecase"
@@ -64,7 +62,7 @@ func init() {
 }
 
 func main() {
-	defaultTimeout := 6 * time.Second
+	// defaultTimeout := 6 * time.Second
 
 	var err error
 
@@ -136,15 +134,16 @@ func main() {
 				logger.Error(err.Error())
 				os.Exit(1)
 			}
-			validator := commonadapter.NewJwksIDTokenValidator(jwksUrl)
+			validator := commonadapter.NewJwksIDTokenValidator(jwksUrl, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
 			idTokenValidators[v.Token.Source] = validator
 		}
 	}
 
 	// http handler
-	userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)
+	// userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)
 	router := mux.NewRouter()
-	SetRoute(router, conf.Server.Http, idTokenValidators)
+	// SetRoute(router, conf.Server.Http, idTokenValidators)
+	route.UserRoute(router, conf.Server.Http, idTokenValidators, userUsc)
 
 	// http server
 	tlsConfig := sihttp.CreateTLSConfigMinTls(tls.VersionTLS12)
@@ -178,39 +177,29 @@ func main() {
 	logger.Info("finished")
 }
 
-var (
-	userHandler *delivery.UserHttpHandler
-)
+// var (
+// 	userHandler *delivery.UserHttpHandler
+// )
 
-func SetRoute(router *mux.Router, conf common.ConfigHttp, validator commonport.IDTokenValidators) {
-	router.HandleFunc("/v1/user/{login_source}",
-		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
-	).Methods(http.MethodPost)
-	router.HandleFunc("/v1/user",
-		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
-	).Methods(http.MethodPost)
-	// router.HandleFunc("/v1/user/google",
-	// 	middlewares.AuthBearerHandler(userHandler.HandleRegisterGoogleUser, conf.BearerToken),
-	// ).Methods(http.MethodPost)
+// func SetRoute(router *mux.Router, conf common.ConfigHttp, validator commonport.IDTokenValidators) {
+// 	// router.HandleFunc("/v1/user/{login_source}",
+// 	// 	middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
+// 	// ).Methods(http.MethodPost)
 
-	// router.HandleFunc("/v1/user/{id}",
-	// 	middlewares.AuthBearerHandler(userHandler.HandleFindUser, conf.BearerToken),
-	// ).Methods(http.MethodGet)
+// 	router.HandleFunc("/v1/user/account",
+// 		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "tid", "id_token", "token_source"),
+// 	).Methods(http.MethodGet)
 
-	router.HandleFunc("/v1/user/account",
-		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "tid", "id_token", "token_source"),
-	).Methods(http.MethodGet)
+// 	router.HandleFunc("/v1/user",
+// 		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
+// 	).Methods(http.MethodPost)
 
-	router.HandleFunc("/v1/user/{id}",
-		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "tid", "id_token", "token_source"),
-	).Methods(http.MethodGet)
+// 	router.HandleFunc("/v1/user/{id}",
+// 		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "tid", "id_token", "token_source"),
+// 	).Methods(http.MethodGet)
 
-	// router.HandleFunc("/v1/user/{id}",
-	// 	middlewares.AuthJWTHandler(userHandler.HandleChangeUser, conf.Jwt.Secret),
-	// ).Methods(http.MethodPut)
+// 	router.HandleFunc("/v1/user/{id}",
+// 		middlewares.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
+// 	).Methods(http.MethodDelete)
 
-	router.HandleFunc("/v1/user/{id}",
-		middlewares.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
-	).Methods(http.MethodDelete)
-
-}
+// }
