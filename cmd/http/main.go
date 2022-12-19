@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -26,6 +27,11 @@ import (
 	"github.com/w-woong/user/port"
 	"github.com/w-woong/user/usecase"
 	"gorm.io/gorm"
+
+	// "go.elastic.co/apm/module/apmgorilla/v2"
+	postgresapm "go.elastic.co/apm/module/apmgormv2/v2/driver/postgres" // postgres with gorm
+	// _ "go.elastic.co/apm/module/apmsql/v2/pq" // postgres sql with pq
+	"go.elastic.co/apm/v2"
 )
 
 var (
@@ -62,8 +68,6 @@ func init() {
 }
 
 func main() {
-	// defaultTimeout := 6 * time.Second
-
 	var err error
 
 	if printVersion {
@@ -71,6 +75,13 @@ func main() {
 		return
 	}
 	runtime.GOMAXPROCS(maxProc)
+
+	// apm
+	apmActive, _ := strconv.ParseBool(os.Getenv("ELASTIC_APM_ACTIVE"))
+	if apmActive {
+		tracer := apm.DefaultTracer()
+		defer tracer.Flush(nil)
+	}
 
 	// config
 	conf := common.Config{}
@@ -85,31 +96,63 @@ func main() {
 		conf.Logger.File.MaxAge, conf.Logger.File.Compressed)
 	defer logger.Close()
 
-	// db
-	sqlDB, err := si.OpenSqlDB(conf.Server.Repo.Driver, conf.Server.Repo.ConnStr,
-		conf.Server.Repo.MaxIdleConns, conf.Server.Repo.MaxOpenConns,
-		time.Duration(conf.Server.Repo.ConnMaxLifetimeMinutes)*time.Minute)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer sqlDB.Close()
-
 	// gorm
 	var gormDB *gorm.DB
 	switch conf.Server.Repo.Driver {
 	case "pgx":
-		gormDB, err = sigorm.OpenPostgres(sqlDB)
+		// // db
+		// sqlDB, err := si.OpenSqlDB(conf.Server.Repo.Driver, conf.Server.Repo.ConnStr,
+		// 	conf.Server.Repo.MaxIdleConns, conf.Server.Repo.MaxOpenConns,
+		// 	time.Duration(conf.Server.Repo.ConnMaxLifetimeMinutes)*time.Minute)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	os.Exit(1)
+		// }
+		// defer sqlDB.Close()
+		// gormDB, err = sigorm.OpenPostgres(sqlDB)
+		// if err != nil {
+		// 	logger.Error(err.Error())
+		// 	os.Exit(1)
+		// }
+
+		if apmActive {
+			gormDB, err = gorm.Open(postgresapm.Open(conf.Server.Repo.ConnStr),
+				&gorm.Config{Logger: logger.OpenGormLogger(conf.Server.Repo.LogLevel)},
+			)
+			if err != nil {
+				logger.Error(err.Error())
+				os.Exit(1)
+			}
+			db, err := gormDB.DB()
+			if err != nil {
+				logger.Error(err.Error())
+				os.Exit(1)
+			}
+			defer db.Close()
+		} else {
+			// db
+			// var db *sql.DB
+			db, err := si.OpenSqlDB(conf.Server.Repo.Driver, conf.Server.Repo.ConnStr,
+				conf.Server.Repo.MaxIdleConns, conf.Server.Repo.MaxOpenConns, time.Duration(conf.Server.Repo.ConnMaxLifetimeMinutes)*time.Minute)
+			if err != nil {
+				logger.Error(err.Error())
+				os.Exit(1)
+			}
+			defer db.Close()
+
+			gormDB, err = sigorm.OpenPostgresWithConfig(db,
+				&gorm.Config{Logger: logger.OpenGormLogger(conf.Server.Repo.LogLevel)},
+			)
+			if err != nil {
+				logger.Error(err.Error())
+				os.Exit(1)
+			}
+		}
+		gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{})
 	default:
 		logger.Error(conf.Server.Repo.Driver + " is not allowed")
 		os.Exit(1)
 	}
-	if err != nil {
-		logger.Error(err.Error())
-		os.Exit(1)
-	}
-
-	gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{})
 
 	var txBeginner common.TxBeginner
 	var pwRepo port.PasswordRepo
@@ -180,30 +223,3 @@ func main() {
 	tickerDone <- true
 	logger.Info("finished")
 }
-
-// var (
-// 	userHandler *delivery.UserHttpHandler
-// )
-
-// func SetRoute(router *mux.Router, conf common.ConfigHttp, validator commonport.IDTokenValidators) {
-// 	// router.HandleFunc("/v1/user/{login_source}",
-// 	// 	middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
-// 	// ).Methods(http.MethodPost)
-
-// 	router.HandleFunc("/v1/user/account",
-// 		middlewares.AuthIDTokenHandler(userHandler.HandleFindByLoginID, validator, "tid", "id_token", "token_source"),
-// 	).Methods(http.MethodGet)
-
-// 	router.HandleFunc("/v1/user",
-// 		middlewares.AuthBearerHandler(userHandler.HandleRegisterUser, conf.BearerToken),
-// 	).Methods(http.MethodPost)
-
-// 	router.HandleFunc("/v1/user/{id}",
-// 		middlewares.AuthIDTokenHandler(userHandler.HandleFindUser, validator, "tid", "id_token", "token_source"),
-// 	).Methods(http.MethodGet)
-
-// 	router.HandleFunc("/v1/user/{id}",
-// 		middlewares.AuthJWTHandler(userHandler.HandleRemoveUser, conf.Jwt.Secret),
-// 	).Methods(http.MethodDelete)
-
-// }
