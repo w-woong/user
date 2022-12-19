@@ -21,6 +21,7 @@ import (
 	"github.com/w-woong/common/logger"
 	commonport "github.com/w-woong/common/port"
 	"github.com/w-woong/common/txcom"
+	"github.com/w-woong/common/utils"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/cmd/route"
 	"github.com/w-woong/user/entity"
@@ -172,16 +173,18 @@ func main() {
 	idTokenValidators := make(commonport.IDTokenValidators)
 	for _, v := range conf.Client.Oauth2.IDTokenValidators {
 		if v.Type == "jwks" {
-			jwksUrl, err := commonadapter.GetJwksUrl(v.OpenIDConfUrl)
+			jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
 			if err != nil {
 				logger.Error(err.Error())
 				os.Exit(1)
 			}
-			validator, err := commonadapter.NewJwksIDTokenValidator(jwksUrl, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
+
+			jwksStore, err := utils.NewJwksCache(jwksUrl)
 			if err != nil {
 				logger.Error(err.Error())
 				os.Exit(1)
 			}
+			validator := commonadapter.NewJwksIDTokenValidator(jwksStore, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
 			idTokenValidators[v.Token.Source] = validator
 		}
 	}
