@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/stretchr/testify v1.8.0
-	github.com/w-woong/common v0.0.44
+	github.com/w-woong/common v0.0.50
 	github.com/wonksing/structmapper v0.0.4
 	google.golang.org/grpc v1.50.1
 	gorm.io/driver/postgres v1.4.4
@@ -18,6 +18,7 @@ require (
 
 require (
 	github.com/MicahParks/keyfunc v1.7.0 // indirect
+	github.com/allegro/bigcache/v3 v3.1.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elastic/go-licenser v0.4.0 // indirect
