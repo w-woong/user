@@ -25,6 +25,7 @@ type LoginSource string
 var (
 	LoginSourceWoong  LoginSource = "woong"
 	LoginSourceGoogle LoginSource = "google"
+	LoginSourceKakao  LoginSource = "kakao"
 )
 
 func (e LoginSource) LoginID(id string) (string, error) {
@@ -32,6 +33,11 @@ func (e LoginSource) LoginID(id string) (string, error) {
 	case LoginSourceWoong:
 		return id, nil
 	case LoginSourceGoogle:
+		if strings.HasPrefix(id, string(e)+"_") {
+			return id, nil
+		}
+		return string(e) + "_" + id, nil
+	case LoginSourceKakao:
 		if strings.HasPrefix(id, string(e)+"_") {
 			return id, nil
 		}
@@ -105,19 +111,6 @@ func (e User) Validate() error {
 	if err := e.validateLoginID(); err != nil {
 		return err
 	}
-	return nil
-}
-
-func CreateGoogleLoginID(id string) string {
-	return string(LoginSourceGoogle) + "_" + id
-}
-func (e *User) GenerateGoogleLoginID() error {
-	if e.LoginID == "" {
-		return errors.New("login id is empty")
-	}
-	e.LoginID = CreateGoogleLoginID(e.LoginID)
-	e.LoginSource = LoginSourceGoogle
-	e.LoginType = LoginTypeToken
 	return nil
 }
 

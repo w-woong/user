@@ -34,6 +34,7 @@ func (d *userGrpcServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRe
 		logger.Error(err.Error())
 		return nil, err
 	}
+	logger.Debug(user.String())
 
 	registeredUser, err := d.usc.RegisterUser(ctx, user)
 	if err != nil {

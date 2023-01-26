@@ -95,15 +95,6 @@ func (u *User) FindByLoginID(ctx context.Context, loginSource string, loginID st
 	return conv.ToUserDto(&user)
 }
 
-// func (u *User) FindByGoogleLoginID(ctx context.Context, loginID string) (dto.User, error) {
-// 	user, err := u.userRepo.ReadByLoginIDNoTx(ctx, entity.CreateGoogleLoginID(loginID))
-// 	if err != nil {
-// 		return dto.NilUser, err
-// 	}
-
-// 	return conv.ToUserDto(&user)
-// }
-
 // takenLoginID checks if loginID is already taken.
 // Returns nil if loginID is available.
 func (u *User) takenLoginID(ctx context.Context, tx common.TxController, loginID string) error {
