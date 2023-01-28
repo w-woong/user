@@ -57,9 +57,11 @@ type User struct {
 	LoginType   LoginType   `gorm:"not null;type:string;size:32;comment:login type" json:"login_type"`
 	LoginSource LoginSource `gorm:"not null;type:string;size:32;comment:login source" json:"login_source"`
 
-	Password Password `gorm:"foreignKey:UserID;references:ID" json:"password"`
-	Personal Personal `gorm:"foreignKey:UserID;references:ID" json:"personal"`
-	Emails   Emails   `gorm:"foreignKey:UserID;references:ID" json:"emails"`
+	Password        Password        `gorm:"foreignKey:UserID;references:ID" json:"password"`
+	Personal        Personal        `gorm:"foreignKey:UserID;references:ID" json:"personal"`
+	Emails          Emails          `gorm:"foreignKey:UserID;references:ID" json:"emails"`
+	DeliveryAddress DeliveryAddress `gorm:"foreignKey:UserID;references:ID" json:"delivery_address"`
+	PaymentMethod   PaymentMethod   `gorm:"foreignKey:UserID;references:ID" json:"payment_method"`
 }
 
 func (e *User) String() string {
@@ -77,7 +79,7 @@ func (e User) IsNil() bool {
 // It generates and set a new ID.
 // It sets references to child entities.
 func (e *User) PrepareToRegister() error {
-	e.GenerateAndSetID()
+	e.CreateSetID()
 	err := e.Validate()
 	if err != nil {
 		return err
@@ -98,11 +100,11 @@ func (e *User) PrepareToRegister() error {
 	return nil
 }
 
-func (e *User) GenerateAndSetID() {
-	e.ID = e.generateID()
+func (e *User) CreateSetID() {
+	e.ID = e.CreateID()
 }
 
-func (e User) generateID() string {
+func (e User) CreateID() string {
 	return uuid.New().String()
 }
 
