@@ -53,9 +53,9 @@ var (
 )
 
 func init() {
-	flag.StringVar(&addr, "addr", ":8080", "listen address")
+	flag.StringVar(&addr, "addr", ":49007", "listen address")
 	flag.BoolVar(&printVersion, "version", false, "print version")
-	flag.IntVar(&tickIntervalSec, "tick", 30, "tick interval in second")
+	flag.IntVar(&tickIntervalSec, "tick", 60, "tick interval in second")
 	flag.StringVar(&certKey, "key", "./certs/key.pem", "server key")
 	flag.StringVar(&certPem, "pem", "./certs/cert.pem", "server pem")
 	flag.IntVar(&readTimeout, "readTimeout", 30, "read timeout")
