@@ -12,7 +12,7 @@ import (
 )
 
 func TestToUserEntity(t *testing.T) {
-	password := commondto.Password{
+	password := commondto.CredentialPassword{
 		Value: "asdfasdfasdfasdfasdfasdfasdf",
 	}
 	personal := commondto.Personal{
@@ -34,11 +34,11 @@ func TestToUserEntity(t *testing.T) {
 		Priority: 1,
 	})
 	src := commondto.User{
-		LoginID:   "wonk",
-		LoginType: "id",
-		Password:  password,
-		Personal:  personal,
-		Emails:    emails,
+		LoginID:            "wonk",
+		LoginType:          "id",
+		CredentialPassword: password,
+		Personal:           personal,
+		Emails:             emails,
 	}
 
 	res, err := conv.ToUserEntity(&src)

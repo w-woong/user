@@ -165,10 +165,10 @@ func (mr *MockPasswordRepoMockRecorder) DeleteByUserID(ctx, tx, userID interface
 }
 
 // ReadByUserID mocks base method.
-func (m *MockPasswordRepo) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error) {
+func (m *MockPasswordRepo) ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.CredentialPassword, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadByUserID", ctx, tx, userID)
-	ret0, _ := ret[0].(entity.Password)
+	ret0, _ := ret[0].(entity.CredentialPassword)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -180,10 +180,10 @@ func (mr *MockPasswordRepoMockRecorder) ReadByUserID(ctx, tx, userID interface{}
 }
 
 // ReadByUserIDNoTx mocks base method.
-func (m *MockPasswordRepo) ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error) {
+func (m *MockPasswordRepo) ReadByUserIDNoTx(ctx context.Context, userID string) (entity.CredentialPassword, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadByUserIDNoTx", ctx, userID)
-	ret0, _ := ret[0].(entity.Password)
+	ret0, _ := ret[0].(entity.CredentialPassword)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -207,4 +207,200 @@ func (m *MockPasswordRepo) UpdateByUserID(ctx context.Context, tx common.TxContr
 func (mr *MockPasswordRepoMockRecorder) UpdateByUserID(ctx, tx, value, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateByUserID", reflect.TypeOf((*MockPasswordRepo)(nil).UpdateByUserID), ctx, tx, value, userID)
+}
+
+// MockPersonalRepo is a mock of PersonalRepo interface.
+type MockPersonalRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockPersonalRepoMockRecorder
+}
+
+// MockPersonalRepoMockRecorder is the mock recorder for MockPersonalRepo.
+type MockPersonalRepoMockRecorder struct {
+	mock *MockPersonalRepo
+}
+
+// NewMockPersonalRepo creates a new mock instance.
+func NewMockPersonalRepo(ctrl *gomock.Controller) *MockPersonalRepo {
+	mock := &MockPersonalRepo{ctrl: ctrl}
+	mock.recorder = &MockPersonalRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPersonalRepo) EXPECT() *MockPersonalRepoMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockPersonalRepo) Create(ctx context.Context, tx common.TxController, o entity.Personal) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, tx, o)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockPersonalRepoMockRecorder) Create(ctx, tx, o interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockPersonalRepo)(nil).Create), ctx, tx, o)
+}
+
+// Delete mocks base method.
+func (m *MockPersonalRepo) Delete(ctx context.Context, tx common.TxController, id string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, tx, id)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockPersonalRepoMockRecorder) Delete(ctx, tx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockPersonalRepo)(nil).Delete), ctx, tx, id)
+}
+
+// Read mocks base method.
+func (m *MockPersonalRepo) Read(ctx context.Context, tx common.TxController, id string) (entity.Personal, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Read", ctx, tx, id)
+	ret0, _ := ret[0].(entity.Personal)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Read indicates an expected call of Read.
+func (mr *MockPersonalRepoMockRecorder) Read(ctx, tx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockPersonalRepo)(nil).Read), ctx, tx, id)
+}
+
+// ReadNoTx mocks base method.
+func (m *MockPersonalRepo) ReadNoTx(ctx context.Context, id string) (entity.Personal, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadNoTx", ctx, id)
+	ret0, _ := ret[0].(entity.Personal)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadNoTx indicates an expected call of ReadNoTx.
+func (mr *MockPersonalRepoMockRecorder) ReadNoTx(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNoTx", reflect.TypeOf((*MockPersonalRepo)(nil).ReadNoTx), ctx, id)
+}
+
+// Update mocks base method.
+func (m *MockPersonalRepo) Update(ctx context.Context, tx common.TxController, o entity.Personal) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, tx, o)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockPersonalRepoMockRecorder) Update(ctx, tx, o interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockPersonalRepo)(nil).Update), ctx, tx, o)
+}
+
+// MockEmailRepo is a mock of EmailRepo interface.
+type MockEmailRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockEmailRepoMockRecorder
+}
+
+// MockEmailRepoMockRecorder is the mock recorder for MockEmailRepo.
+type MockEmailRepoMockRecorder struct {
+	mock *MockEmailRepo
+}
+
+// NewMockEmailRepo creates a new mock instance.
+func NewMockEmailRepo(ctrl *gomock.Controller) *MockEmailRepo {
+	mock := &MockEmailRepo{ctrl: ctrl}
+	mock.recorder = &MockEmailRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEmailRepo) EXPECT() *MockEmailRepoMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockEmailRepo) Create(ctx context.Context, tx common.TxController, o entity.Email) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, tx, o)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockEmailRepoMockRecorder) Create(ctx, tx, o interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockEmailRepo)(nil).Create), ctx, tx, o)
+}
+
+// Delete mocks base method.
+func (m *MockEmailRepo) Delete(ctx context.Context, tx common.TxController, id string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, tx, id)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockEmailRepoMockRecorder) Delete(ctx, tx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockEmailRepo)(nil).Delete), ctx, tx, id)
+}
+
+// Read mocks base method.
+func (m *MockEmailRepo) Read(ctx context.Context, tx common.TxController, id string) (entity.Email, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Read", ctx, tx, id)
+	ret0, _ := ret[0].(entity.Email)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Read indicates an expected call of Read.
+func (mr *MockEmailRepoMockRecorder) Read(ctx, tx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockEmailRepo)(nil).Read), ctx, tx, id)
+}
+
+// ReadNoTx mocks base method.
+func (m *MockEmailRepo) ReadNoTx(ctx context.Context, id string) (entity.Email, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadNoTx", ctx, id)
+	ret0, _ := ret[0].(entity.Email)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadNoTx indicates an expected call of ReadNoTx.
+func (mr *MockEmailRepoMockRecorder) ReadNoTx(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNoTx", reflect.TypeOf((*MockEmailRepo)(nil).ReadNoTx), ctx, id)
+}
+
+// Update mocks base method.
+func (m *MockEmailRepo) Update(ctx context.Context, tx common.TxController, o entity.Email) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, tx, o)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockEmailRepoMockRecorder) Update(ctx, tx, o interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockEmailRepo)(nil).Update), ctx, tx, o)
 }

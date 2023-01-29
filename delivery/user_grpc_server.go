@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/w-woong/common"
 	commonconv "github.com/w-woong/common/conv"
 	commondto "github.com/w-woong/common/dto"
 	pb "github.com/w-woong/common/dto/protos/user/v1"
@@ -38,16 +37,8 @@ func (d *userGrpcServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRe
 
 	registeredUser, err := d.usc.RegisterUser(ctx, user)
 	if err != nil {
-		if errors.Is(err, common.ErrLoginIDAlreadyExists) && in.GetLoginSource() == "google" {
-			registeredUser, err = d.usc.ModifyUser(ctx, user)
-			if err != nil {
-				logger.Error(err.Error())
-				return nil, err
-			}
-		} else {
-			logger.Error(err.Error())
-			return nil, err
-		}
+		logger.Error(err.Error())
+		return nil, err
 	}
 
 	userProtoRes, err := commonconv.ToUserProtoFromDto(registeredUser)

@@ -38,7 +38,7 @@ func TestCreateUser(t *testing.T) {
 		ID:        userID,
 		LoginID:   "test_login_id",
 		LoginType: entity.LoginTypeID,
-		Password: entity.Password{
+		CredentialPassword: entity.CredentialPassword{
 			ID:     passwordID,
 			UserID: userID,
 			Value:  "asdfasdfasdf",
@@ -211,7 +211,7 @@ func createUser(id string) error {
 		ID:        userID,
 		LoginID:   "test_login_id",
 		LoginType: entity.LoginTypeID,
-		Password: entity.Password{
+		CredentialPassword: entity.CredentialPassword{
 			ID:     passwordID,
 			UserID: userID,
 			Value:  "my_password",

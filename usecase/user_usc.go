@@ -48,6 +48,9 @@ func (u *User) RegisterUser(ctx context.Context, userDto commondto.User) (common
 	}
 
 	if err := u.takenLoginID(ctx, tx, user.LoginID); err != nil {
+		if errors.Is(err, common.ErrLoginIDAlreadyExists) && user.LoginType == entity.LoginTypeToken {
+			return u.ModifyUser(ctx, userDto)
+		}
 		return commondto.NilUser, err
 	}
 
@@ -128,11 +131,12 @@ func (u *User) ModifyUser(ctx context.Context, userNew commondto.User) (commondt
 		return commondto.NilUser, err
 	}
 
-	oldUser.Password.Value = userNew.Password.Value
+	oldUser.CredentialPassword.Value = userNew.CredentialPassword.Value
+	oldUser.CredentialToken.Value = userNew.CredentialToken.Value
 	oldUser.Personal.FirstName = userNew.Personal.FirstName
 	oldUser.Personal.LastName = userNew.Personal.LastName
 
-	_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.Password.Value, oldUser.ID)
+	_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.CredentialPassword.Value, oldUser.ID)
 	if err != nil {
 		return commondto.NilUser, err
 	}
@@ -179,7 +183,7 @@ func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) 
 	case entity.LoginTypeEmail:
 		auth = &PasswordAuthenticator{
 			UserID:       user.ID,
-			Password:     password,
+			UserPassword: password,
 			PasswordRepo: u.pwRepo,
 			Tx:           tx,
 		}
@@ -197,7 +201,7 @@ func (u *User) LoginWithPassword(ctx context.Context, loginID, password string) 
 
 type PasswordAuthenticator struct {
 	UserID       string
-	Password     string
+	UserPassword string
 	PasswordRepo port.PasswordRepo
 	Tx           common.TxController
 }
@@ -207,7 +211,7 @@ func (u *PasswordAuthenticator) Authenticate(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if u.Password != pw.Value {
+	if u.UserPassword != pw.Value {
 		return errors.New("incorrect user id and password")
 	}
 	return nil

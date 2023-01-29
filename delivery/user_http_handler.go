@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"bytes"
-	"errors"
 	"net/http"
 	"time"
 
@@ -44,19 +43,9 @@ func (d *UserHttpHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Requ
 
 	var registeredUser commondto.User
 	if registeredUser, err = d.userUsc.RegisterUser(ctx, user); err != nil {
-		// TODO: handle "google"
-		if errors.Is(err, common.ErrLoginIDAlreadyExists) && user.LoginSource == "google" {
-			registeredUser, err = d.userUsc.ModifyUser(ctx, user)
-			if err != nil {
-				common.HttpError(w, http.StatusInternalServerError)
-				logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
-				return
-			}
-		} else {
-			common.HttpError(w, http.StatusInternalServerError)
-			logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
-			return
-		}
+		common.HttpError(w, http.StatusInternalServerError)
+		logger.Error(err.Error(), logger.UrlField(r.URL.String()), logger.ReqBodyField(copiedReqBody.Bytes()))
+		return
 	}
 
 	resBody := common.HttpBody{

@@ -57,11 +57,12 @@ type User struct {
 	LoginType   LoginType   `gorm:"not null;type:string;size:32;comment:login type" json:"login_type"`
 	LoginSource LoginSource `gorm:"not null;type:string;size:32;comment:login source" json:"login_source"`
 
-	Password        Password        `gorm:"foreignKey:UserID;references:ID" json:"password"`
-	Personal        Personal        `gorm:"foreignKey:UserID;references:ID" json:"personal"`
-	Emails          Emails          `gorm:"foreignKey:UserID;references:ID" json:"emails"`
-	DeliveryAddress DeliveryAddress `gorm:"foreignKey:UserID;references:ID" json:"delivery_address"`
-	PaymentMethod   PaymentMethod   `gorm:"foreignKey:UserID;references:ID" json:"payment_method"`
+	CredentialPassword CredentialPassword `gorm:"foreignKey:UserID;references:ID" json:"password"`
+	CredentialToken    CredentialToken    `gorm:"foreignKey:UserID;references:ID" json:"token"`
+	Personal           Personal           `gorm:"foreignKey:UserID;references:ID" json:"personal"`
+	Emails             Emails             `gorm:"foreignKey:UserID;references:ID" json:"emails"`
+	DeliveryAddress    DeliveryAddress    `gorm:"foreignKey:UserID;references:ID" json:"delivery_address"`
+	PaymentMethod      PaymentMethod      `gorm:"foreignKey:UserID;references:ID" json:"payment_method"`
 }
 
 func (e *User) String() string {
@@ -85,7 +86,7 @@ func (e *User) PrepareToRegister() error {
 		return err
 	}
 
-	if err = e.Password.PrepareToRegister(e.ID); err != nil {
+	if err = e.CredentialPassword.PrepareToRegister(e.ID); err != nil {
 		return err
 	}
 

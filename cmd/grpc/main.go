@@ -174,7 +174,11 @@ func main() {
 	}
 
 	if autoMigrate {
-		gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{}, &entity.DeliveryAddress{})
+		gormDB.AutoMigrate(&entity.User{},
+			&entity.Email{}, &entity.CredentialPassword{}, &entity.CredentialToken{},
+			&entity.Personal{},
+			&entity.DeliveryAddress{}, &entity.DeliveryRequest{}, &entity.DeliveryRequestType{},
+			&entity.PaymentType{}, &entity.PaymentMethod{})
 	}
 
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)

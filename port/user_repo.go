@@ -29,8 +29,8 @@ type UserRepo interface {
 }
 
 type PasswordRepo interface {
-	ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.Password, error)
-	ReadByUserIDNoTx(ctx context.Context, userID string) (entity.Password, error)
+	ReadByUserID(ctx context.Context, tx common.TxController, userID string) (entity.CredentialPassword, error)
+	ReadByUserIDNoTx(ctx context.Context, userID string) (entity.CredentialPassword, error)
 
 	UpdateByUserID(ctx context.Context, tx common.TxController, value string, userID string) (int64, error)
 

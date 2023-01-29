@@ -151,7 +151,6 @@ func main() {
 				os.Exit(1)
 			}
 		}
-		gormDB.AutoMigrate(&entity.User{}, &entity.Email{}, &entity.Password{}, &entity.Personal{})
 	default:
 		logger.Error(conf.Server.Repo.Driver + " is not allowed")
 		os.Exit(1)
@@ -173,7 +172,8 @@ func main() {
 
 	if autoMigrate {
 		gormDB.AutoMigrate(&entity.User{},
-			&entity.Email{}, &entity.Password{}, &entity.Personal{},
+			&entity.Email{}, &entity.CredentialPassword{}, &entity.CredentialToken{},
+			&entity.Personal{},
 			&entity.DeliveryAddress{}, &entity.DeliveryRequest{}, &entity.DeliveryRequestType{},
 			&entity.PaymentType{}, &entity.PaymentMethod{})
 	}
