@@ -13,6 +13,9 @@ var (
 	NilDeliveryRequestType = DeliveryRequestType{}
 )
 
+// DeliveryAddress
+// ->User
+// <-DeliveryRequest
 type DeliveryAddress struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
@@ -65,13 +68,14 @@ func (e *DeliveryAddresses) ReferTo(userID string) {
 	}
 }
 
+// DeliveryRequestType
+// <-DeliveryRequest
 type DeliveryRequestType struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
 	UpdatedAt *time.Time `gorm:"<-" json:"updated_at"`
 
-	RequestType string `gorm:"column:request_type;type:string;size:16" json:"request_type"`
-	RequestName string `gorm:"column:request_name;type:string;size:16" json:"request_name"`
+	Name string `gorm:"column:name;type:string;size:512" json:"name"`
 }
 
 func (e *DeliveryRequestType) String() string {
@@ -83,22 +87,17 @@ func (e DeliveryRequestType) IsNil() bool {
 	return e.ID == ""
 }
 
-func (e DeliveryRequestType) CreateID() string {
-	return uuid.New().String()
-}
-
-func (e *DeliveryRequestType) CreateSetID() {
-	e.ID = e.CreateID()
-}
-
+// DeliveryRequest
+// ->DeliveryAddress
+// ->DeliveryRequestType
 type DeliveryRequest struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
 	UpdatedAt *time.Time `gorm:"<-" json:"updated_at"`
 
-	DeliveryAddressID string `gorm:"column:delivery_address_id;type:string;size:64;comment:delivery_address_id" json:"delivery_address_id"`
+	DeliveryAddressID string `gorm:"column:delivery_address_id;type:string;size:64;comment:delivery_address_id;not null" json:"delivery_address_id"`
 
-	DeliveryRequestTypeID string              `gorm:"column:delivery_request_type_id;type:string;size:64" json:"delivery_request_type_id"`
+	DeliveryRequestTypeID string              `gorm:"column:delivery_request_type_id;type:string;size:64;not null" json:"delivery_request_type_id"`
 	DeliveryRequestType   DeliveryRequestType `gorm:"foreignKey:DeliveryRequestTypeID;references:ID" json:"delivery_request_type"`
 	RequestMessage        string              `gorm:"column:request_message;type:string;size:2048;comment:요청메시지" json:"request_message"`
 }

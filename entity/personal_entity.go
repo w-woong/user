@@ -7,6 +7,10 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	NilPersonal = Personal{}
+)
+
 type Personal struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64;comment:id" json:"id"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`

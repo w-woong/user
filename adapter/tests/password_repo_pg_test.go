@@ -14,6 +14,9 @@ func TestUpdateByUserID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
+	createUser("TEST_ID")
+	defer deleteUser("TEST_ID")
+
 	var err error
 
 	txBeginner := txcom.NewGormTxBeginner(gdb)
@@ -23,46 +26,45 @@ func TestUpdateByUserID(t *testing.T) {
 	assert.Nil(t, err)
 	defer tx.Rollback()
 
-	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
-
-	_, err = userRepo.UpdateByUserID(context.Background(), tx, "a", userID)
+	res, err := userRepo.UpdateByUserID(context.Background(), tx, "a", "TEST_ID")
 	assert.Nil(t, err)
 	assert.Nil(t, tx.Commit())
+	assert.Equal(t, int64(1), res)
 }
 
 func TestReadByUserID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
+	createUser("TEST_ID")
+	defer deleteUser("TEST_ID")
+
 	txBeginner := txcom.NewGormTxBeginner(gdb)
-	userRepo := adapter.NewPasswordPg(gdb)
+	repo := adapter.NewPasswordPg(gdb)
 
 	tx, err := txBeginner.Begin()
 	assert.Nil(t, err)
 	defer tx.Rollback()
 
-	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
-
-	password, err := userRepo.ReadByUserID(context.Background(), tx, userID)
+	password, err := repo.ReadByUserID(context.Background(), tx, "TEST_ID")
 	assert.Nil(t, err)
 	assert.Nil(t, tx.Commit())
 
-	fmt.Println(password)
+	assert.Equal(t, "TEST_ID", password.ID)
 }
 
 func TestReadByUserIDNoTx(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
+	createUser("TEST_ID")
+	defer deleteUser("TEST_ID")
 
-	userRepo := adapter.NewPasswordPg(gdb)
+	repo := adapter.NewPasswordPg(gdb)
 
-	userID := "faad3cfb-a23e-4f17-a580-b7e3bcf8de43"
-
-	password, err := userRepo.ReadByUserIDNoTx(context.Background(), userID)
+	password, err := repo.ReadByUserIDNoTx(context.Background(), "TEST_ID")
 	assert.Nil(t, err)
-
-	fmt.Println(password)
+	assert.Equal(t, "TEST_ID", password.ID)
 }
 
 func TestDeleteByUserID(t *testing.T) {

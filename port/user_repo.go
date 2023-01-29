@@ -36,3 +36,19 @@ type PasswordRepo interface {
 
 	DeleteByUserID(ctx context.Context, tx common.TxController, userID string) (int64, error)
 }
+
+type PersonalRepo interface {
+	Create(ctx context.Context, tx common.TxController, o entity.Personal) (int64, error)
+	Read(ctx context.Context, tx common.TxController, id string) (entity.Personal, error)
+	ReadNoTx(ctx context.Context, id string) (entity.Personal, error)
+	Update(ctx context.Context, tx common.TxController, o entity.Personal) (int64, error)
+	Delete(ctx context.Context, tx common.TxController, id string) (int64, error)
+}
+
+type EmailRepo interface {
+	Create(ctx context.Context, tx common.TxController, o entity.Email) (int64, error)
+	Read(ctx context.Context, tx common.TxController, id string) (entity.Email, error)
+	ReadNoTx(ctx context.Context, id string) (entity.Email, error)
+	Update(ctx context.Context, tx common.TxController, o entity.Email) (int64, error)
+	Delete(ctx context.Context, tx common.TxController, id string) (int64, error)
+}

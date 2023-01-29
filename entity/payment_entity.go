@@ -7,6 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	NilPaymentType   = PaymentType{}
+	NilPaymentMethod = PaymentMethod{}
+)
+
 type PaymentType struct {
 	ID        string     `gorm:"primaryKey;type:string;size:64" json:"id"`
 	CreatedAt *time.Time `gorm:"<-:create" json:"created_at"`
@@ -18,14 +23,6 @@ type PaymentType struct {
 func (e *PaymentType) String() string {
 	b, _ := json.Marshal(e)
 	return string(b)
-}
-
-func (e PaymentType) CreateID() string {
-	return uuid.New().String()
-}
-
-func (e *PaymentType) CreateSetID() {
-	e.ID = e.CreateID()
 }
 
 func (e PaymentType) IsNil() bool {
