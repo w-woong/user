@@ -12,7 +12,7 @@ import (
 	"github.com/w-woong/user/entity"
 )
 
-func TestCreateUser(t *testing.T) {
+func Test_userPg_CreateUser(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
@@ -60,6 +60,7 @@ func TestCreateUser(t *testing.T) {
 	})
 	assert.Nil(t, err)
 	assert.Nil(t, tx.Commit())
+
 }
 
 // func TestCreateUser2(t *testing.T) {
