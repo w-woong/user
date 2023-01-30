@@ -21,12 +21,12 @@ var (
 	userDto = commondto.User{
 		ID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 		LoginID: "wonk",
-		CredentialPassword: commondto.CredentialPassword{
+		CredentialPassword: &commondto.CredentialPassword{
 			ID:     "333cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID: "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			Value:  "asdfasdfasdf",
 		},
-		Personal: commondto.Personal{
+		Personal: &commondto.Personal{
 			ID:          "433cbf79-ca5f-42dc-8ca0-29441209a36a",
 			UserID:      "22bcbf79-ca5f-42dc-8ca0-29441209a36a",
 			FirstName:   "wonk",

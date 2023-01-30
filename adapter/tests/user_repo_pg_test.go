@@ -2,6 +2,7 @@ package adapter_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -38,12 +39,12 @@ func TestCreateUser(t *testing.T) {
 		ID:        userID,
 		LoginID:   "test_login_id",
 		LoginType: entity.LoginTypeID,
-		CredentialPassword: entity.CredentialPassword{
+		CredentialPassword: &entity.CredentialPassword{
 			ID:     passwordID,
 			UserID: userID,
 			Value:  "asdfasdfasdf",
 		},
-		Personal: entity.Personal{
+		Personal: &entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
 			BirthDate: &birthDate,
@@ -152,19 +153,25 @@ func TestReadByID(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	// var err error
-	// userRepo := adapter.NewPgUser(gdb)
+	createUser("TEST_ID")
+	defer deleteUser("TEST_ID")
 
-	// id := "cdb497b8-3698-41b8-bd4c-605e0e0a0446"
-	// user, err := userRepo.ReadUserByID(id)
-	// assert.Nil(t, err)
-	// fmt.Println(user.String())
+	var err error
+	ctx := context.Background()
 
-	// // location, err := time.LoadLocation("America/New_York")
-	// location, err := time.LoadLocation("Asia/Seoul")
-	// assert.Nil(t, err)
-	// fmt.Println(user.BirthDate.In(location))
-	// assert.Nil(t, err)
+	txBeginner := txcom.NewGormTxBeginner(gdb)
+	repo := adapter.NewPgUser(gdb)
+
+	tx, err := txBeginner.Begin()
+	assert.Nil(t, err)
+	defer tx.Rollback()
+
+	user, err := repo.ReadUser(ctx, tx, "TEST_ID")
+	assert.Nil(t, err)
+	assert.Nil(t, tx.Commit())
+
+	assert.EqualValues(t, "TEST_ID", user.ID)
+	fmt.Println(user.String())
 }
 
 func TestReadByID2(t *testing.T) {
@@ -211,12 +218,12 @@ func createUser(id string) error {
 		ID:        userID,
 		LoginID:   "test_login_id",
 		LoginType: entity.LoginTypeID,
-		CredentialPassword: entity.CredentialPassword{
+		CredentialPassword: &entity.CredentialPassword{
 			ID:     passwordID,
 			UserID: userID,
 			Value:  "my_password",
 		},
-		Personal: entity.Personal{
+		Personal: &entity.Personal{
 			ID:        personalID,
 			UserID:    userID,
 			BirthDate: &birthDate,

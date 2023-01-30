@@ -41,11 +41,17 @@ func (a *PgUser) ReadUserNoTx(ctx context.Context, id string) (entity.User, erro
 
 func (a *PgUser) readUser(ctx context.Context, db *gorm.DB, id string) (entity.User, error) {
 	user := entity.User{}
-	res := db.WithContext(ctx).Where("id = ?", id).
-		First(&user)
+	res := a.preloadUser(db).
+		WithContext(ctx).
+		Where("id = ?", id).
+		Limit(1).Find(&user)
 	if res.Error != nil {
 		logger.Error(res.Error.Error())
 		return entity.NilUser, txcom.ConvertErr(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		logger.Error(common.ErrRecordNotFound.Error())
+		return entity.NilUser, common.ErrRecordNotFound
 	}
 
 	return user, nil
@@ -58,10 +64,17 @@ func (a *PgUser) ReadByLoginIDNoTx(ctx context.Context, loginID string) (entity.
 	return a.readByLoginID(ctx, a.db, loginID)
 }
 
+func (a *PgUser) preloadUser(db *gorm.DB) *gorm.DB {
+
+	return db.Preload("DeliveryAddress.DeliveryRequest.DeliveryRequestType").
+		Preload("PaymentMethod.PaymentType").
+		Preload(clause.Associations)
+}
+
 func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string) (entity.User, error) {
 	user := entity.User{}
-	res := db.WithContext(ctx).
-		Preload(clause.Associations).
+	res := a.preloadUser(db).
+		WithContext(ctx).
 		Where("login_id = ?", loginID).
 		Limit(1).Find(&user)
 

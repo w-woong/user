@@ -57,12 +57,12 @@ type User struct {
 	LoginType   LoginType   `gorm:"not null;type:string;size:32;comment:login type" json:"login_type"`
 	LoginSource LoginSource `gorm:"not null;type:string;size:32;comment:login source" json:"login_source"`
 
-	CredentialPassword CredentialPassword `gorm:"foreignKey:UserID;references:ID" json:"password"`
-	CredentialToken    CredentialToken    `gorm:"foreignKey:UserID;references:ID" json:"token"`
-	Personal           Personal           `gorm:"foreignKey:UserID;references:ID" json:"personal"`
-	Emails             Emails             `gorm:"foreignKey:UserID;references:ID" json:"emails"`
-	DeliveryAddress    DeliveryAddress    `gorm:"foreignKey:UserID;references:ID" json:"delivery_address"`
-	PaymentMethod      PaymentMethod      `gorm:"foreignKey:UserID;references:ID" json:"payment_method"`
+	CredentialPassword *CredentialPassword `gorm:"foreignKey:UserID;references:ID" json:"password,omitempty"`
+	CredentialToken    *CredentialToken    `gorm:"foreignKey:UserID;references:ID" json:"token,omitempty"`
+	Personal           *Personal           `gorm:"foreignKey:UserID;references:ID" json:"personal,omitempty"`
+	Emails             Emails              `gorm:"foreignKey:UserID;references:ID" json:"emails,omitempty"`
+	DeliveryAddress    *DeliveryAddress    `gorm:"foreignKey:UserID;references:ID" json:"delivery_address,omitempty"`
+	PaymentMethod      *PaymentMethod      `gorm:"foreignKey:UserID;references:ID" json:"payment_method,omitempty"`
 }
 
 func (e *User) String() string {

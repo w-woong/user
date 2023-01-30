@@ -36,8 +36,8 @@ func TestToUserEntity(t *testing.T) {
 	src := commondto.User{
 		LoginID:            "wonk",
 		LoginType:          "id",
-		CredentialPassword: password,
-		Personal:           personal,
+		CredentialPassword: &password,
+		Personal:           &personal,
 		Emails:             emails,
 	}
 
