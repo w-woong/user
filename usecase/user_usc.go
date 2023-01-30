@@ -131,14 +131,20 @@ func (u *User) ModifyUser(ctx context.Context, userNew commondto.User) (commondt
 		return commondto.NilUser, err
 	}
 
-	oldUser.CredentialPassword.Value = userNew.CredentialPassword.Value
-	oldUser.CredentialToken.Value = userNew.CredentialToken.Value
-	oldUser.Personal.FirstName = userNew.Personal.FirstName
-	oldUser.Personal.LastName = userNew.Personal.LastName
+	if oldUser.CredentialPassword != nil {
+		oldUser.CredentialPassword.Value = userNew.CredentialPassword.Value
+		_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.CredentialPassword.Value, oldUser.ID)
+		if err != nil {
+			return commondto.NilUser, err
+		}
+	}
 
-	_, err = u.pwRepo.UpdateByUserID(ctx, tx, oldUser.CredentialPassword.Value, oldUser.ID)
-	if err != nil {
-		return commondto.NilUser, err
+	if oldUser.CredentialToken != nil {
+		oldUser.CredentialToken.Value = userNew.CredentialToken.Value
+	}
+	if oldUser.Personal != nil {
+		oldUser.Personal.FirstName = userNew.Personal.FirstName
+		oldUser.Personal.LastName = userNew.Personal.LastName
 	}
 
 	oldUserDto, err := conv.ToUserDto(&oldUser)

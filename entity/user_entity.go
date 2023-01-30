@@ -86,8 +86,19 @@ func (e *User) PrepareToRegister() error {
 		return err
 	}
 
-	if err = e.CredentialPassword.PrepareToRegister(e.ID); err != nil {
-		return err
+	if e.CredentialPassword != nil && e.CredentialPassword.Value != "" {
+		if err = e.CredentialPassword.PrepareToRegister(e.ID); err != nil {
+			return err
+		}
+	} else {
+		e.CredentialPassword = nil
+	}
+	if e.CredentialToken != nil && e.CredentialToken.Value != "" {
+		if err = e.CredentialToken.PrepareToRegister(e.ID); err != nil {
+			return err
+		}
+	} else {
+		e.CredentialToken = nil
 	}
 
 	if err = e.Personal.PrepareToRegister(e.ID); err != nil {
@@ -97,6 +108,9 @@ func (e *User) PrepareToRegister() error {
 	if err = e.Emails.PrepareToRegister(e.ID); err != nil {
 		return err
 	}
+
+	e.DeliveryAddress = nil
+	e.PaymentMethod = nil
 
 	return nil
 }

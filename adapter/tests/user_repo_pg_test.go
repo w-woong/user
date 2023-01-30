@@ -172,6 +172,7 @@ func TestReadByID(t *testing.T) {
 
 	assert.EqualValues(t, "TEST_ID", user.ID)
 	fmt.Println(user.String())
+
 }
 
 func TestReadByID2(t *testing.T) {
@@ -213,6 +214,7 @@ func createUser(id string) error {
 	personalID := id
 	passwordID := id
 	emailID := id
+	deliveryAddressID := id
 
 	_, err = userRepo.CreateUser(context.Background(), tx, entity.User{
 		ID:        userID,
@@ -234,6 +236,26 @@ func createUser(id string) error {
 				UserID:   userID,
 				Email:    "test_login_id@test.test",
 				Priority: 0,
+			},
+		},
+		DeliveryAddress: &entity.DeliveryAddress{
+			ID:              deliveryAddressID,
+			UserID:          userID,
+			IsDefault:       true,
+			ReceiverName:    "Name",
+			ReceiverContact: "000-0000-0000",
+			PostCode:        "00000",
+			Address:         "asdfasdfasdfasdfasdfasdf",
+			AddressDetail:   "asdfasdfasdfasdfasdfasdf",
+			DeliveryRequest: entity.DeliveryRequest{
+				ID:                    "TEST_ID",
+				DeliveryAddressID:     deliveryAddressID,
+				DeliveryRequestTypeID: "TEST_ID",
+				DeliveryRequestType: entity.DeliveryRequestType{
+					ID:   "TEST_ID",
+					Name: "At door",
+				},
+				RequestMessage: "message",
 			},
 		},
 	})

@@ -79,11 +79,11 @@ func (a *PgUser) readByLoginID(ctx context.Context, db *gorm.DB, loginID string)
 		Limit(1).Find(&user)
 
 	if res.Error != nil {
-		logger.Error(res.Error.Error())
+		logger.Error("loginID: " + loginID + ", " + res.Error.Error())
 		return entity.NilUser, txcom.ConvertErr(res.Error)
 	}
 	if res.RowsAffected == 0 {
-		logger.Error(common.ErrRecordNotFound.Error())
+		logger.Error("loginID: " + loginID + ", " + common.ErrRecordNotFound.Error())
 		return entity.NilUser, common.ErrRecordNotFound
 	}
 
