@@ -35,18 +35,6 @@ server:
 
 client:
   oauth2:
-    id_token_validators:
-      - type: 'jwks'
-        token:
-          source: 'google'
-          id_key_name: 'tid'
-          id_token_key_name: 'id_token'
-          token_source_key_name: 'token_source'
-        openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
-      - type: 'jwks'
-        token:
-          source: 'woong'
-          id_key_name: 'tid'
-          id_token_key_name: 'id_token'
-          token_source_key_name: 'token_source'
-        openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
+    woong:
+      openid_conf_url: 'http://127.0.0.1:4444/.well-known/openid-configuration'
+      id_token_cookie: 'id_token'

@@ -12,13 +12,13 @@ import (
 	"github.com/w-woong/user/port"
 )
 
-func UserRoute(router *mux.Router, conf common.ConfigHttp,
-	validator commonport.IDTokenValidators, usc port.UserUsc) *delivery.UserHttpHandler {
+func UserRoute(router *mux.Router, conf common.ConfigHttp, cookie commonport.TokenCookie,
+	idTokenParser commonport.IDTokenParser, usc port.UserUsc) *delivery.UserHttpHandler {
 
 	handler := delivery.NewUserHttpHandler(time.Duration(conf.Timeout)*time.Second, usc)
 
 	router.HandleFunc("/v1/user/account",
-		middlewares.AuthIDTokenHandler(handler.HandleFindByLoginID, validator),
+		middlewares.AuthIDToken(handler.HandleFindByLoginID, cookie, idTokenParser),
 	).Methods(http.MethodGet)
 
 	router.HandleFunc("/v1/user",
@@ -26,7 +26,7 @@ func UserRoute(router *mux.Router, conf common.ConfigHttp,
 	).Methods(http.MethodPost)
 
 	router.HandleFunc("/v1/user/{id}",
-		middlewares.AuthIDTokenHandler(handler.HandleFindUser, validator),
+		middlewares.AuthIDToken(handler.HandleFindUser, cookie, idTokenParser),
 	).Methods(http.MethodGet)
 
 	router.HandleFunc("/v1/user/{id}",

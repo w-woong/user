@@ -8,7 +8,7 @@ import (
 
 	commonconv "github.com/w-woong/common/conv"
 	commondto "github.com/w-woong/common/dto"
-	pb "github.com/w-woong/common/dto/protos/user/v1"
+	pb "github.com/w-woong/common/dto/protos/user/v2"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/user/port"
 )
@@ -55,7 +55,7 @@ func (d *userGrpcServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRe
 	return &res, nil
 }
 
-func (d *userGrpcServer) FindByLoginID(ctx context.Context, in *pb.FindByLoginIDRequest) (*pb.UserReply, error) {
+func (d *userGrpcServer) FindByIDToken(ctx context.Context, in *pb.FindByIDTokenRequest) (*pb.UserReply, error) {
 
 	claims, ok := ctx.Value(commondto.IDTokenClaimsKey{}).(commondto.IDTokenClaims)
 	if !ok {
@@ -63,13 +63,13 @@ func (d *userGrpcServer) FindByLoginID(ctx context.Context, in *pb.FindByLoginID
 		return nil, errors.New("could not find claims")
 	}
 
-	tokenSource, ok := ctx.Value(commondto.TokenSourceKey{}).(string)
-	if !ok {
-		logger.Error("could not find claims")
-		return nil, errors.New("could not find claims")
-	}
+	// tokenSource, ok := ctx.Value(commondto.TokenSourceKey{}).(string)
+	// if !ok {
+	// 	logger.Error("could not find claims")
+	// 	return nil, errors.New("could not find claims")
+	// }
 
-	user, err := d.usc.FindByLoginID(ctx, tokenSource, claims.Subject)
+	user, err := d.usc.FindByLoginID(ctx, claims.TokenSource, claims.Subject)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err

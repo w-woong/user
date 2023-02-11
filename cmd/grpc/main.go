@@ -16,7 +16,7 @@ import (
 	"github.com/w-woong/common"
 	commonadapter "github.com/w-woong/common/adapter"
 	"github.com/w-woong/common/configs"
-	userpb "github.com/w-woong/common/dto/protos/user/v1"
+	userpb "github.com/w-woong/common/dto/protos/user/v2"
 	"github.com/w-woong/common/logger"
 	"github.com/w-woong/common/middlewares"
 	commonport "github.com/w-woong/common/port"
@@ -183,22 +183,21 @@ func main() {
 
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
-	idTokenValidators := make(commonport.IDTokenValidators)
-	for _, v := range conf.Client.Oauth2.IDTokenValidators {
-		if v.Type == "jwks" {
-			jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
-			if err != nil {
-				logger.Error(err.Error())
-				os.Exit(1)
-			}
-			jwksStore, err := utils.NewJwksCache(jwksUrl)
-			if err != nil {
-				logger.Error(err.Error())
-				os.Exit(1)
-			}
-			validator := commonadapter.NewJwksIDTokenValidator(jwksStore, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
-			idTokenValidators[v.Token.Source] = validator
+	// var tokenCookie commonport.TokenCookie
+	var idTokenParser commonport.IDTokenParser
+	for _, v := range conf.Client.OAuth2 {
+		jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
+		if err != nil {
+			logger.Error(err.Error())
+			os.Exit(1)
 		}
+
+		jwksStore, err := utils.NewJwksCache(jwksUrl)
+		if err != nil {
+			logger.Error(err.Error())
+			os.Exit(1)
+		}
+		idTokenParser = commonadapter.NewJwksIDTokenParser(jwksStore)
 	}
 
 	// grpc
@@ -209,7 +208,7 @@ func main() {
 	}
 	svr, err := wrapper.NewGrpcServer(conf.Server.Grpc, certPem, certKey, false,
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			middlewares.AuthIDTokenInterceptor(idTokenValidators),
+			middlewares.AuthIDTokenGrpc(idTokenParser),
 		)))
 	if err != nil {
 		logger.Error(err.Error())

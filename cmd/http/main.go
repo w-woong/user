@@ -180,30 +180,30 @@ func main() {
 
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
-	idTokenValidators := make(commonport.IDTokenValidators)
-	for _, v := range conf.Client.Oauth2.IDTokenValidators {
-		if v.Type == "jwks" {
-			jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
-			if err != nil {
-				logger.Error(err.Error())
-				os.Exit(1)
-			}
-
-			jwksStore, err := utils.NewJwksCache(jwksUrl)
-			if err != nil {
-				logger.Error(err.Error())
-				os.Exit(1)
-			}
-			validator := commonadapter.NewJwksIDTokenValidator(jwksStore, v.Token.TokenSourceKeyName, v.Token.IDKeyName, v.Token.IDTokenKeyName)
-			idTokenValidators[v.Token.Source] = validator
+	var tokenCookie commonport.TokenCookie
+	var idTokenParser commonport.IDTokenParser
+	for _, v := range conf.Client.OAuth2 {
+		jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
+		if err != nil {
+			logger.Error(err.Error())
+			os.Exit(1)
 		}
+
+		tokenCookie = commonadapter.NewTokenCookie(1*time.Hour, v.IDTokenCookie)
+
+		jwksStore, err := utils.NewJwksCache(jwksUrl)
+		if err != nil {
+			logger.Error(err.Error())
+			os.Exit(1)
+		}
+		idTokenParser = commonadapter.NewJwksIDTokenParser(jwksStore)
 	}
 
 	// http handler
 	// userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)
 	router := mux.NewRouter()
 	// SetRoute(router, conf.Server.Http, idTokenValidators)
-	route.UserRoute(router, conf.Server.Http, idTokenValidators, userUsc)
+	route.UserRoute(router, conf.Server.Http, tokenCookie, idTokenParser, userUsc)
 
 	// http server
 	tlsConfig := sihttp.CreateTLSConfigMinTls(tls.VersionTLS12)
