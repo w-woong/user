@@ -38,7 +38,7 @@ client:
   id_token_cookie: 'id_token'
   oauth2:
     integrated:
-      openid_conf_url: 'http://127.0.0.1:5558/.well-known/openid-configuration'
+      openid_conf_url: 'https://127.0.0.1:5558/.well-known/openid-configuration'
 
 # client:
 #   oauth2:
