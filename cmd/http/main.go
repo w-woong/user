@@ -180,7 +180,6 @@ func main() {
 
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
-	var tokenCookie commonport.TokenCookie
 	var idTokenParser commonport.IDTokenParser
 	for _, v := range conf.Client.OAuth2 {
 		jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
@@ -189,8 +188,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		tokenCookie = commonadapter.NewTokenCookie(1*time.Hour, v.IDTokenCookie)
-
 		jwksStore, err := utils.NewJwksCache(jwksUrl)
 		if err != nil {
 			logger.Error(err.Error())
@@ -198,6 +195,7 @@ func main() {
 		}
 		idTokenParser = commonadapter.NewJwksIDTokenParser(jwksStore)
 	}
+	tokenCookie := commonadapter.NewTokenCookie(1*time.Hour, conf.Client.IDTokenCookie)
 
 	// http handler
 	// userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)

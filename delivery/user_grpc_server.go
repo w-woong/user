@@ -57,17 +57,11 @@ func (d *userGrpcServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRe
 
 func (d *userGrpcServer) FindByIDToken(ctx context.Context, in *pb.FindByIDTokenRequest) (*pb.UserReply, error) {
 
-	claims, ok := ctx.Value(commondto.IDTokenClaimsKey{}).(commondto.IDTokenClaims)
+	claims, ok := ctx.Value(commondto.IDTokenClaimsContextKey{}).(commondto.IDTokenClaims)
 	if !ok {
 		logger.Error("could not find claims")
 		return nil, errors.New("could not find claims")
 	}
-
-	// tokenSource, ok := ctx.Value(commondto.TokenSourceKey{}).(string)
-	// if !ok {
-	// 	logger.Error("could not find claims")
-	// 	return nil, errors.New("could not find claims")
-	// }
 
 	user, err := d.usc.FindByLoginID(ctx, claims.TokenSource, claims.Subject)
 	if err != nil {

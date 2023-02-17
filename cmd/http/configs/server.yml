@@ -35,10 +35,10 @@ server:
 
 
 client:
+  id_token_cookie: 'id_token'
   oauth2:
-    woong:
-      openid_conf_url: 'http://127.0.0.1:4444/.well-known/openid-configuration'
-      id_token_cookie: 'id_token'
+    integrated:
+      openid_conf_url: 'http://127.0.0.1:5558/.well-known/openid-configuration'
 
 # client:
 #   oauth2:

@@ -133,21 +133,14 @@ func (d *UserHttpHandler) HandleFindUser(w http.ResponseWriter, r *http.Request)
 
 func (d *UserHttpHandler) HandleFindByLoginID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	claims, ok := ctx.Value(commondto.IDTokenClaimsKey{}).(commondto.IDTokenClaims)
+	claims, ok := ctx.Value(commondto.IDTokenClaimsContextKey{}).(commondto.IDTokenClaims)
 	if !ok {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error("could not find claims", logger.UrlField(r.URL.String()))
 		return
 	}
 
-	tokenSource, ok := ctx.Value(commondto.TokenSourceKey{}).(string)
-	if !ok {
-		common.HttpError(w, http.StatusInternalServerError)
-		logger.Error("could not find claims", logger.UrlField(r.URL.String()))
-		return
-	}
-
-	user, err := d.userUsc.FindByLoginID(ctx, tokenSource, claims.Subject)
+	user, err := d.userUsc.FindByLoginID(ctx, claims.TokenSource, claims.Subject)
 	if err != nil {
 		common.HttpError(w, http.StatusInternalServerError)
 		logger.Error(err.Error(), logger.UrlField(r.URL.String()))
