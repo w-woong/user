@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-wonk/si"
-	"github.com/go-wonk/si/sigorm"
-	"github.com/go-wonk/si/sihttp"
+	"github.com/go-wonk/si/v2"
+	"github.com/go-wonk/si/v2/sigorm"
+	"github.com/go-wonk/si/v2/sihttp"
 	"github.com/gorilla/mux"
 	"github.com/w-woong/common"
 	commonadapter "github.com/w-woong/common/adapter"
@@ -21,7 +21,6 @@ import (
 	"github.com/w-woong/common/logger"
 	commonport "github.com/w-woong/common/port"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/common/utils"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/cmd/route"
 	"github.com/w-woong/user/entity"
@@ -181,27 +180,27 @@ func main() {
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
 	var idTokenParser commonport.IDTokenParser
-	for _, v := range conf.Client.OAuth2 {
-		jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
-		if err != nil {
-			logger.Error(err.Error())
-			os.Exit(1)
-		}
-
-		jwksStore, err := utils.NewJwksCache(jwksUrl)
-		if err != nil {
-			logger.Error(err.Error())
-			os.Exit(1)
-		}
-		idTokenParser = commonadapter.NewJwksIDTokenParser(jwksStore)
+	if v, ok := conf.Client.OAuth2["integrated"]; ok {
+		idTokenParser = commonadapter.NewJwksIDTokenParserWithUrl(v.OpenIDConfUrl, v.OpenIDConfiguration.JwksUri)
+	} else {
+		logger.Error("client.oauth2.integrated configuration is invalid")
+		os.Exit(1)
 	}
-	tokenCookie := commonadapter.NewTokenCookie(1*time.Hour, conf.Client.IDTokenCookie)
+
+	// id token cookie config
+	var idTokenCookie commonport.Cookie
+	if idTokenCookeConfig, ok := conf.Client.Cookies["id_token"]; ok {
+		idTokenCookie = commonadapter.NewSecureCookie(
+			time.Duration(idTokenCookeConfig.Expires)*time.Second,
+			idTokenCookeConfig.SameSiteMode(),
+			idTokenCookeConfig.Name, idTokenCookeConfig.Domain, idTokenCookeConfig.Path)
+	}
 
 	// http handler
 	// userHandler = delivery.NewUserHttpHandler(defaultTimeout, userUsc)
 	router := mux.NewRouter()
 	// SetRoute(router, conf.Server.Http, idTokenValidators)
-	route.UserRoute(router, conf.Server.Http, tokenCookie, idTokenParser, userUsc)
+	route.UserRoute(router, conf.Server.Http, idTokenCookie, idTokenParser, userUsc)
 
 	// http server
 	tlsConfig := sihttp.CreateTLSConfigMinTls(tls.VersionTLS12)

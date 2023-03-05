@@ -35,25 +35,13 @@ server:
 
 
 client:
-  id_token_cookie: 'id_token'
+  cookies:
+    id_token:
+      name: 'id_token'
+      expires: 604800
+      same_site: 'strict'
+      domain: 'my-domain.com'
+      path: '/'
   oauth2:
     integrated:
-      openid_conf_url: 'https://127.0.0.1:5558/.well-known/openid-configuration'
-
-# client:
-#   oauth2:
-#     id_token_validators:
-#       - type: 'jwks'
-#         token:
-#           source: 'google'
-#           id_key_name: 'tid'
-#           id_token_key_name: 'id_token'
-#           token_source_key_name: 'token_source'
-#         openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
-#       - type: 'jwks'
-#         token:
-#           source: 'woong'
-#           id_key_name: 'tid'
-#           id_token_key_name: 'id_token'
-#           token_source_key_name: 'token_source'
-#         openid_conf_url: 'https://accounts.google.com/.well-known/openid-configuration'
+      openid_conf_url: 'https://oauth2.my-domain.com/.well-known/openid-configuration'

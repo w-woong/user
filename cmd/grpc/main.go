@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-wonk/si"
-	"github.com/go-wonk/si/sigorm"
+	"github.com/go-wonk/si/v2"
+	"github.com/go-wonk/si/v2/sigorm"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/w-woong/common"
 	commonadapter "github.com/w-woong/common/adapter"
@@ -21,7 +21,6 @@ import (
 	"github.com/w-woong/common/middlewares"
 	commonport "github.com/w-woong/common/port"
 	"github.com/w-woong/common/txcom"
-	"github.com/w-woong/common/utils"
 	"github.com/w-woong/common/wrapper"
 	"github.com/w-woong/user/adapter"
 	"github.com/w-woong/user/delivery"
@@ -183,21 +182,12 @@ func main() {
 
 	userUsc := usecase.NewUser(txBeginner, userRepo, pwRepo)
 
-	// var tokenCookie commonport.TokenCookie
 	var idTokenParser commonport.IDTokenParser
-	for _, v := range conf.Client.OAuth2 {
-		jwksUrl, err := utils.GetJwksUrl(v.OpenIDConfUrl)
-		if err != nil {
-			logger.Error(err.Error())
-			os.Exit(1)
-		}
-
-		jwksStore, err := utils.NewJwksCache(jwksUrl)
-		if err != nil {
-			logger.Error(err.Error())
-			os.Exit(1)
-		}
-		idTokenParser = commonadapter.NewJwksIDTokenParser(jwksStore)
+	if v, ok := conf.Client.OAuth2["integrated"]; ok {
+		idTokenParser = commonadapter.NewJwksIDTokenParserWithUrl(v.OpenIDConfUrl, v.OpenIDConfiguration.JwksUri)
+	} else {
+		logger.Error("client.oauth2.integrated configuration is invalid")
+		os.Exit(1)
 	}
 
 	// grpc

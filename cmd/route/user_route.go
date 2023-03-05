@@ -12,7 +12,7 @@ import (
 	"github.com/w-woong/user/port"
 )
 
-func UserRoute(router *mux.Router, conf common.ConfigHttp, cookie commonport.TokenCookie,
+func UserRoute(router *mux.Router, conf common.ConfigHttp, cookie commonport.Cookie,
 	idTokenParser commonport.IDTokenParser, usc port.UserUsc) *delivery.UserHttpHandler {
 
 	handler := delivery.NewUserHttpHandler(time.Duration(conf.Timeout)*time.Second, usc)
